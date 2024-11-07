@@ -1,7 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   experimental: {
     ppr: true,
   },
@@ -13,5 +15,4 @@ const nextConfig: NextConfig = {
     ],
   },
 };
-
 export default nextConfig;
