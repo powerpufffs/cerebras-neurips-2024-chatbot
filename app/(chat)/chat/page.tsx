@@ -11,7 +11,7 @@ import { Message } from '@/db/schema';
 
 export default async function Page(props: { params: Promise<any> }) {
   const params = await props.params;
-  const { id } = params;
+  // const { id } = params;
   // const chat = await getChatById({ id });
 
   // if (!chat) {
@@ -32,13 +32,9 @@ export default async function Page(props: { params: Promise<any> }) {
   //   id,
   // });
   const messagesFromDb: Array<Message> = []
-
-  // const cookieStore = await cookies();
-  // const modelIdFromCookie = cookieStore.get('model-id')?.value;
-  // const selectedModelId =
-  //   models.find((model) => model.id === modelIdFromCookie)?.id ||
-  //   DEFAULT_MODEL_NAME;
-  const selectedModelId = 'llama3.1-70b'
+  const selectedModelId =
+    models.find((model) => model.id === localStorage.getItem('cerebras-neurips-model-pref'))?.id ||
+    DEFAULT_MODEL_NAME;
 
   return (
     <PreviewChat

@@ -1,11 +1,17 @@
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI} from '@ai-sdk/openai';
 import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
 
 import { customMiddleware } from './custom-middleware';
 
+export const cerebras = createOpenAI({
+  // name: 'Cerebras',
+  baseURL: 'https://api.cerebras.ai/v1',
+  apiKey: process.env.CEREBRAS_API_KEY, 
+});
+
 export const customModel = (apiIdentifier: string) => {
   return wrapLanguageModel({
-    model: openai(apiIdentifier),
+    model: cerebras(apiIdentifier),
     middleware: customMiddleware,
   });
 };

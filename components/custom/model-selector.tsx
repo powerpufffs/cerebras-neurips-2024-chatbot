@@ -22,12 +22,16 @@ export function ModelSelector({
   selectedModelId: string;
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
-  const [optimisticModelId, setOptimisticModelId] =
-    useOptimistic(selectedModelId);
+  const [selectedModel, setSelectedModel] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('cerebras-neurips-model-pref') || selectedModelId;
+    }
+    return selectedModelId;
+  });
 
   const selectModel = useMemo(
-    () => models.find((model) => model.id === optimisticModelId),
-    [optimisticModelId]
+    () => models.find((model) => model.id === selectedModel),
+    [selectedModel]
   );
 
   return (
@@ -50,14 +54,12 @@ export function ModelSelector({
             key={model.id}
             onSelect={() => {
               setOpen(false);
-
-              startTransition(() => {
-                setOptimisticModelId(model.id);
-                saveModelId(model.id);
-              });
+              console.log("ABOUT TO SET VALUE")
+              localStorage.setItem('cerebras-neurips-model-pref', model.id);
+              setSelectedModel(model.id);
             }}
             className="gap-4 group/item flex flex-row justify-between items-center"
-            data-active={model.id === optimisticModelId}
+            data-active={model.id === selectedModel}
           >
             <div className="flex flex-col gap-1 items-start">
               {model.label}
