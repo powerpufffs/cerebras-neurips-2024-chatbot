@@ -1,4 +1,4 @@
-import { InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel, sql } from 'drizzle-orm';
 import {
   pgTable,
   varchar,
@@ -9,6 +9,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  index,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -29,6 +30,60 @@ export const chat = pgTable('Chat', {
 });
 
 export type Chat = InferSelectModel<typeof chat>;
+
+export const NeuripsPaper = pgTable(
+  'neurips_papers',
+  {
+    id: uuid('id').primaryKey().notNull(),
+    uid: text('uid'),
+    name: text('name'),
+    authors: json('authors'),
+    abstract: text('abstract'),
+    topic: text('topic'),
+    keywords: json('keywords'),
+    decision: text('decision'),
+    session: text('session'),
+    eventtype: text('eventtype'),
+    event_type: text('event_type'),
+    room_name: text('room_name'),
+    virtualsite_url: text('virtualsite_url'),
+    url: text('url'),
+    sourceid: uuid('sourceid'),
+    sourceurl: text('sourceurl'),
+    starttime: timestamp('starttime', { withTimezone: true }),
+    endtime: timestamp('endtime', { withTimezone: true }),
+    starttime2: timestamp('starttime2', { withTimezone: true }),
+    endtime2: timestamp('endtime2', { withTimezone: true }),
+    diversity_event: boolean('diversity_event'),
+    paper_url: text('paper_url'),
+    paper_pdf_url: text('paper_pdf_url'),
+    children_url: text('children_url'),
+    children: json('children'),
+    children_ids: json('children_ids'),
+    parent1: text('parent1'),
+    parent2: text('parent2'),
+    parent2_id: uuid('parent2_id'),
+    eventmedia: json('eventmedia'),
+    show_in_schedule_overview: boolean('show_in_schedule_overview'),
+    visible: boolean('visible'),
+    poster_position: uuid('poster_position'),
+    schedule_html: text('schedule_html'),
+    latitude: varchar('latitude'),
+    longitude: varchar('longitude'),
+    related_events: json('related_events'),
+    related_events_ids: json('related_events_ids'),
+    searchable_text: text('searchable_text'),
+    arxiv_id: text('arxiv_id'),
+  },
+  (table) => ({
+    searchable_text_tsvector: index('search_gin_idx').using(
+      'gin',
+      sql`to_tsvector('english', concat_ws(' ', ${table.searchable_text}))`
+    ),
+  })
+);
+
+export type NeuripsPapers = InferSelectModel<typeof NeuripsPaper>;
 
 export const message = pgTable('Message', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),

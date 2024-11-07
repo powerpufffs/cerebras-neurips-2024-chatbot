@@ -1,7 +1,7 @@
 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -14,14 +14,50 @@ import {
   suggestion,
   Message,
   message,
+  NeuripsPaper,
   vote,
 } from './schema';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
-// let client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
-// let db = drizzle(client);
+let client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
+let db = drizzle(client);
+
+// Our Stuff
+export async function getPapers({
+  id,
+  query,
+}: { id?: string; query?: string } = {}) {
+  try {
+    if (id) {
+      return await db
+        .select()
+        .from(NeuripsPaper)
+        .where(eq(NeuripsPaper.id, id))
+        .limit(10);
+    }
+
+    if (query) {
+      // Use to_tsquery for full-text search
+      return await db
+        .select()
+        .from(NeuripsPaper)
+        .where(
+          sql`to_tsvector('english', ${NeuripsPaper.searchable_text}) @@ to_tsquery('english', ${query})`
+        )
+        .limit(10);
+    }
+
+    // If no search query, return recent papers
+    const res = await db.select().from(NeuripsPaper).limit(10);
+
+    return res;
+  } catch (error) {
+    console.error('Failed to get papers from database', error);
+    throw error;
+  }
+}
 
 export async function getUser(email: string): Promise<Array<User>> {
   try {

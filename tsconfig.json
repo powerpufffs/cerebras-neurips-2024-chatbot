@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.js"
-  ],
+, "app/(papers)/papers/[id]"  ],
   "exclude": ["node_modules"]
 }
