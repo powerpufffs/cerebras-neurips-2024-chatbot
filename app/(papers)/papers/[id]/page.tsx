@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { fetcher } from '@/lib/utils';
 import BackButton from './backbutton';
 import { Chat } from '@/components/custom/chat';
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { NeuripsPapers } from '@/db/schema';
 
 interface Author {
@@ -20,14 +20,15 @@ interface Paper {
   paper_url?: string;
 }
 
-export default function PaperPage({ params }: { params: { id: string } }) {
+export default function PaperPage({ params }: { params: Promise<{ id: string }> }) {
   const [showChat, setShowChat] = useState(false);
+  const resolvedParams = use(params);
 
   const {
     data: papers,
     error,
     isLoading,
-  } = useSWR<Array<NeuripsPapers>>(`/api/papers?id=${params.id}`, fetcher);
+  } = useSWR<Array<NeuripsPapers>>(`/api/papers?id=${resolvedParams.id}`, fetcher);
 
   const paper = papers?.[0];
 
