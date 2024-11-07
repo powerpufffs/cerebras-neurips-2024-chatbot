@@ -40,11 +40,13 @@ export async function getPapers({
 
     if (query) {
       // Use to_tsquery for full-text search
+      const sanitizedQuery = query.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+
       return await db
         .select()
         .from(NeuripsPaper)
         .where(
-          sql`to_tsvector('english', ${NeuripsPaper.searchable_text}) @@ to_tsquery('english', ${query})`
+          sql`to_tsvector('english', ${NeuripsPaper.searchable_text}) @@ plainto_tsquery('english', ${sanitizedQuery})`
         )
         .limit(10);
     }

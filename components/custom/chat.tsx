@@ -7,7 +7,7 @@ import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useWindowSize } from 'usehooks-ts';
 
-import { ChatHeader } from '@/components/custom/chat-header';
+// import { ChatHeader } from '@/components/custom/chat-header';
 import { PreviewMessage, ThinkingMessage } from '@/components/custom/message';
 import { useScrollToBottom } from '@/components/custom/use-scroll-to-bottom';
 import { Vote } from '@/db/schema';
@@ -43,7 +43,7 @@ export function Chat({
     body: { id, modelId: selectedModelId },
     initialMessages,
     onFinish: () => {
-      mutate('/api/history');
+      // mutate('/api/history');
     },
   });
 
@@ -64,10 +64,10 @@ export function Chat({
     },
   });
 
-  const { data: votes } = useSWR<Array<Vote>>(
-    `/api/vote?chatId=${id}`,
-    fetcher
-  );
+  // const { data: votes } = useSWR<Array<Vote>>(
+  //   `/api/vote?chatId=${id}`,
+  //   fetcher
+  // );
 
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
@@ -76,8 +76,8 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 h-dvh bg-background">
-        <ChatHeader selectedModelId={selectedModelId} />
+      <div className="flex flex-col min-w-0 max-h-[700px]">
+        {/* <ChatHeader selectedModelId={selectedModelId} /> */}
         <div
           ref={messagesContainerRef}
           className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4"
@@ -92,11 +92,7 @@ export function Chat({
               block={block}
               setBlock={setBlock}
               isLoading={isLoading && messages.length - 1 === index}
-              vote={
-                votes
-                  ? votes.find((vote) => vote.messageId === message.id)
-                  : undefined
-              }
+              vote={undefined}
             />
           ))}
 
@@ -111,7 +107,7 @@ export function Chat({
             className="shrink-0 min-w-[24px] min-h-[24px]"
           />
         </div>
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+        <form className="flex mx-auto  bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
           <MultimodalInput
             chatId={id}
             input={input}
@@ -128,7 +124,7 @@ export function Chat({
         </form>
       </div>
 
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {block && block.isVisible && (
           <Block
             chatId={id}
@@ -147,7 +143,7 @@ export function Chat({
             votes={votes}
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       <BlockStreamHandler streamingData={streamingData} setBlock={setBlock} />
     </>

@@ -9,14 +9,21 @@ import { fetcher } from '@/lib/utils';
 import { NeuripsPapers } from '@/db/schema';
 import { useQueryState } from 'nuqs';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 export default function PapersPage() {
+  const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useQueryState('query', {
     defaultValue: '',
+    shallow: true,
   });
   const [isSearched, setIsSearched] = useState(searchQuery !== '');
 
-  const { data: papers, error } = useSWR<Array<NeuripsPapers>>(
+  const {
+    data: papers,
+    error,
+    isLoading,
+  } = useSWR<Array<NeuripsPapers>>(
     isSearched
       ? `/api/papers${searchQuery ? `?query=${searchQuery}` : ''}`
       : null,
@@ -25,6 +32,7 @@ export default function PapersPage() {
 
   const handleSearch = () => {
     setIsSearched(true);
+    setSearchQuery(inputValue);
   };
 
   return (
@@ -51,9 +59,13 @@ export default function PapersPage() {
             type="search"
             placeholder="Search research papers"
             className="h-12 text-lg"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
           />
           <Button variant={'outline'} className="h-12" onClick={handleSearch}>
             Search
@@ -73,7 +85,12 @@ export default function PapersPage() {
               <p className="text-red-500">Error loading papers</p>
             </div>
           )}
-          {papers && (
+          {isLoading && (
+            <div className="flex justify-center items-center min-h-[200px]">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          )}
+          {papers && !isLoading && (
             <div className="space-y-6">
               <p className="text-muted-foreground text-lg px-4 -mb-8">
                 Search results for: {searchQuery}
