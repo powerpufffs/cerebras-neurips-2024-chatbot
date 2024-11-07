@@ -3,7 +3,7 @@
 import { Attachment, Message } from 'ai';
 import { useChat } from 'ai/react';
 import { AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { useWindowSize } from 'usehooks-ts';
 
@@ -30,6 +30,15 @@ export function Chat({
   arxivId?: string;
 }) {
   const { mutate } = useSWRConfig();
+
+  const { data, isLoading: isLoadingSuggestedQuestions } = useSWR(
+    id ? `/api/suggested-questions?id=${id}` : null,
+    fetcher
+  );
+
+  const suggestedQuestions = useMemo(() => {
+    return data ? JSON.parse(data).suggestions : null;
+  }, [data]);
 
   const {
     messages,
@@ -126,6 +135,7 @@ export function Chat({
             messages={messages}
             setMessages={setMessages}
             append={append}
+            overrideSuggestedQuestions={suggestedQuestions}
           />
         </form>
       </div>

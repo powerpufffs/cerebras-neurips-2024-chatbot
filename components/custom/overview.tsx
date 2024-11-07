@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import CerebrasLogo from '@/public/images/cerebras-logo.png';
 
 import { MessageIcon, VercelIcon } from './icons';
 
@@ -17,15 +18,19 @@ export const Overview = () => {
         <p className="flex flex-row justify-center gap-4 items-center">
           <MessageIcon size={32} />
         </p>
-        <p>
-          Ask any question about this research paper and get instant responses.
+        <h4>
+          Ask any question about this research paper and get instant responses!
+        </h4>
+        <p className="flex items-center justify-center -mt-16">
+          Powered by
+          <span>
+            <img
+              src={CerebrasLogo.src}
+              alt="Cerebras Logo"
+              className="w-32 object-contain"
+            />
+          </span>
         </p>
-        {/* <img
-          src="https://cerebras.ai/wp-content/uploads/2022/08/cerebras-hp-carousel-09.jpg"
-          alt="Cerebras Logo"
-          className="h-8 mx-auto w-24 h-24"
-        /> */}
-        <p>Powered by Cerebras</p>
       </div>
     </motion.div>
   );

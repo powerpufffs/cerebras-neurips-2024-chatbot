@@ -33,7 +33,8 @@ export const fetcher = async (url: string) => {
     throw error;
   }
 
-  return res.json();
+  const data = await res.json();
+  return data;
 };
 
 export function getLocalStorage(key: string) {

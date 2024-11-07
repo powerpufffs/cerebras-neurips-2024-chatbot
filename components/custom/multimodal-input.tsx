@@ -31,7 +31,8 @@ const suggestedActions = [
   {
     title: 'Explain the methodology',
     label: 'used in this research',
-    action: 'Can you explain the methodology and experimental setup used in this research paper?',
+    action:
+      'Can you explain the methodology and experimental setup used in this research paper?',
   },
 ];
 
@@ -48,6 +49,7 @@ export function MultimodalInput({
   append,
   handleSubmit,
   className,
+  overrideSuggestedQuestions = undefined,
 }: {
   chatId: string;
   input: string;
@@ -68,6 +70,11 @@ export function MultimodalInput({
     },
     chatRequestOptions?: ChatRequestOptions
   ) => void;
+  overrideSuggestedQuestions?: Array<{
+    title: string;
+    label: string;
+    action: string;
+  }>;
   className?: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -197,33 +204,35 @@ export function MultimodalInput({
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
           <div className="grid sm:grid-cols-2 gap-2 w-full">
-            {suggestedActions.map((suggestedAction, index) => (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: 0.05 * index }}
-                key={index}
-                className={index > 1 ? 'hidden sm:block' : 'block'}
-              >
-                <Button
-                  variant="ghost"
-                  onClick={async () => {
-                    // window.history.replaceState({}, '', `/chat/${chatId}`);
-                    append({
-                      role: 'user',
-                      content: suggestedAction.action,
-                    });
-                  }}
-                  className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+            {(overrideSuggestedQuestions ?? suggestedActions ?? []).map(
+              (suggestedAction, index) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ delay: 0.05 * index }}
+                  key={index}
+                  className={index > 1 ? 'hidden sm:block' : 'block'}
                 >
-                  <span className="font-medium">{suggestedAction.title}</span>
-                  <span className="text-muted-foreground">
-                    {suggestedAction.label}
-                  </span>
-                </Button>
-              </motion.div>
-            ))}
+                  <Button
+                    variant="ghost"
+                    onClick={async () => {
+                      // window.history.replaceState({}, '', `/chat/${chatId}`);
+                      append({
+                        role: 'user',
+                        content: suggestedAction.action,
+                      });
+                    }}
+                    className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+                  >
+                    <span className="font-medium">{suggestedAction.title}</span>
+                    <span className="text-muted-foreground">
+                      {suggestedAction.label}
+                    </span>
+                  </Button>
+                </motion.div>
+              )
+            )}
           </div>
         )}
 
@@ -304,7 +313,7 @@ export function MultimodalInput({
         </Button>
       )}
 
-      <Button
+      {/* <Button
         className="rounded-full p-1.5 h-fit absolute bottom-2 right-11 m-0.5 dark:border-zinc-700"
         onClick={(event) => {
           event.preventDefault();
@@ -314,7 +323,7 @@ export function MultimodalInput({
         disabled={isLoading}
       >
         <PaperclipIcon size={14} />
-      </Button>
+      </Button> */}
     </div>
   );
 }

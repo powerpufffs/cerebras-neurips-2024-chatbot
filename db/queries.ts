@@ -4,6 +4,7 @@ import { genSaltSync, hashSync } from 'bcrypt-ts';
 import { and, asc, cosineDistance, desc, eq, gt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import OpenAI from 'openai';
 
 import {
   user,
@@ -66,6 +67,69 @@ export async function embedString(text: string): Promise<EmbeddingResponse> {
       embedding: [],
       error: error instanceof Error ? error.message : 'Unknown error occurred',
     };
+  }
+}
+
+const openai = new OpenAI({
+  apiKey: process.env.CEREBRAS_API_KEY,
+  baseURL: 'https://api.cerebras.ai/v1',
+});
+
+export async function getSuggestedQuestions({ id }: { id: string }) {
+  try {
+    // Get paper abstract from database
+    const paper = await db
+      .select({ abstract: NeuripsPaper.abstract })
+      .from(NeuripsPaper)
+      .where(eq(NeuripsPaper.id, id))
+      .limit(1);
+
+    if (!paper || paper.length === 0) {
+      throw new Error('Paper not found');
+    }
+
+    const abstract = paper[0].abstract;
+
+    // Generate questions using OpenAI
+    const response = await openai.chat.completions.create({
+      model: 'llama3.1-70b',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content: `You are a helpful research assistant. Given a paper abstract, generate 3 insightful questions about the paper. Return them in JSON format with the following structure:
+            {
+              "suggestions": [
+                {
+                  "title": "Short question title", 
+                  "label": "Question subtitle",
+                  "action": "Full question text"
+                },
+                {
+                  title: 'What are the main findings',
+                  label: 'of this paper?',
+                  action: 'What are the main findings of this paper?',
+                },
+                {
+                  title: 'Explain the methodology',
+                  label: 'used in this research',
+                  action:
+                    'Can you explain the methodology and experimental setup used in this research paper?',
+                },
+              ]
+            }`,
+        },
+        {
+          role: 'user',
+          content: `Generate 3 questions about this paper abstract: ${abstract}`,
+        },
+      ],
+    });
+
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error('Error generating suggested questions:', error);
+    throw error;
   }
 }
 
