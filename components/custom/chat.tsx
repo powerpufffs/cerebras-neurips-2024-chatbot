@@ -22,10 +22,12 @@ export function Chat({
   id,
   initialMessages,
   selectedModelId,
+  arxivId,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedModelId: string;
+  arxivId?: string;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -40,7 +42,11 @@ export function Chat({
     stop,
     data: streamingData,
   } = useChat({
-    body: { id, modelId: selectedModelId },
+    body: {
+      id,
+      modelId: selectedModelId,
+      arxivId: arxivId,
+    },
     initialMessages,
     onFinish: () => {
       // mutate('/api/history');

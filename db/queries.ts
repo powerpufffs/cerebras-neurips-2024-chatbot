@@ -1,7 +1,7 @@
 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt, sql } from 'drizzle-orm';
+import { and, asc, cosineDistance, desc, eq, gt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -16,6 +16,7 @@ import {
   message,
   NeuripsPaper,
   vote,
+  NeuripsMetadata,
 } from './schema';
 
 // Optionally, if not using email/pass login, you can
@@ -25,6 +26,83 @@ let client = postgres(`${process.env.POSTGRES_URL!}?sslmode=require`);
 let db = drizzle(client);
 
 // Our Stuff
+
+interface EmbeddingResponse {
+  embedding: number[];
+  error?: string;
+}
+
+export async function embedString(text: string): Promise<EmbeddingResponse> {
+  try {
+    // Clean the text (similar to the Python version)
+    const cleanText = text
+      .replace(/\x00/g, '')
+      .replace(/\x01/g, '')
+      .replace(/\x02/g, '')
+      .replace(/\x03/g, '');
+
+    // Generate embedding via API call
+    const response = await fetch(
+      'https://api-inference.huggingface.co/models/BAAI/bge-large-en-v1.5',
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({ inputs: cleanText }),
+      }
+    );
+
+    const result = await response.json();
+
+    // The API returns an array with a single embedding array
+    const embedding = result;
+
+    return { embedding };
+  } catch (error) {
+    console.error('Error generating embedding:', error);
+    return {
+      embedding: [],
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+    };
+  }
+}
+
+export async function getRelevantChunks({
+  arxivId,
+  query,
+}: {
+  arxivId: string;
+  query: string;
+}) {
+  try {
+    const { embedding } = await embedString(query);
+    const similarity = sql<number>`1 - (${cosineDistance(NeuripsMetadata.embedding, embedding)})`;
+
+    const res = await db
+      .select({
+        text: NeuripsMetadata.text,
+        metadata: NeuripsMetadata.metadata,
+        similarity,
+      })
+      .from(NeuripsMetadata)
+      .where(
+        and(
+          gt(similarity, 0.5),
+          sql`${NeuripsMetadata.metadata}->>'arxiv_id' = ${arxivId}`
+        )
+      )
+      .orderBy(desc(similarity))
+      .limit(3);
+
+    return res;
+  } catch (error) {
+    console.error('Failed to get relevant chunks from database', error);
+    throw error;
+  }
+}
+
 export async function getPapers({
   id,
   query,

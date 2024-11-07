@@ -100,8 +100,12 @@ export default function PaperPage({ params }: { params: { id: string } }) {
             )}
           </section>
           <section className="prose prose-slate max-w-none">
-            <h2 className="text-2xl font-semibold mb-4">Abstract</h2>
-            <p className="text-lg leading-relaxed">{paper.abstract}</p>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-600">
+              Abstract
+            </h2>
+            <p className="text-lg leading-relaxed text-slate-400">
+              {paper.abstract}
+            </p>
           </section>
 
           <div className="pt-8 flex gap-4">
@@ -124,6 +128,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
               id={paper.arxiv_id}
               initialMessages={[]}
               selectedModelId="llama3.1-70b"
+              arxivId={paper.arxiv_id}
             />
           </div>
         )}

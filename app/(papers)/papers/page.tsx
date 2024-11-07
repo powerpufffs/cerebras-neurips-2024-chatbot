@@ -12,11 +12,11 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 
 export default function PapersPage() {
-  const [inputValue, setInputValue] = useState('');
   const [searchQuery, setSearchQuery] = useQueryState('query', {
     defaultValue: '',
     shallow: true,
   });
+  const [inputValue, setInputValue] = useState(searchQuery);
   const [isSearched, setIsSearched] = useState(searchQuery !== '');
 
   const {
@@ -47,14 +47,14 @@ export default function PapersPage() {
       >
         {!isSearched && (
           <div className="mb-8 text-center">
-            <h1 className="mb-2 text-4xl font-bold">HEHE</h1>
+            <h1 className="mb-2 text-4xl font-bold">NEURIPS Directory (2024)</h1>
             <p className="text-lg text-muted-foreground">
               powered by Cerebras Inference
             </p>
           </div>
         )}
 
-        <div className="w-full max-w-2xl flex gap-3">
+        <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-3">
           <Input
             type="search"
             placeholder="Search research papers"

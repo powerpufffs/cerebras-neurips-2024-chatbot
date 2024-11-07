@@ -1,3 +1,4 @@
+import { metadata } from '@/app/layout';
 import { InferSelectModel, sql } from 'drizzle-orm';
 import {
   pgTable,
@@ -8,8 +9,10 @@ import {
   text,
   primaryKey,
   foreignKey,
+  integer,
   boolean,
   index,
+  vector,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -30,6 +33,25 @@ export const chat = pgTable('Chat', {
 });
 
 export type Chat = InferSelectModel<typeof chat>;
+
+export const NeuripsMetadata = pgTable(
+  'data_neurips_metadata',
+  {
+    id: integer('id').primaryKey().notNull(),
+    text: varchar('text', { length: 2048 }).notNull(),
+    metadata: json('metadata_'),
+    nodeId: text('node_id').notNull(),
+    embedding: vector('embedding', { dimensions: 1024 }),
+  },
+  (table) => ({
+    embeddingIndex: index('neurips_metadata_embedding_idx').using(
+      'hnsw',
+      table.embedding.op('vector_cosine_ops')
+    ),
+  })
+);
+
+export type NeuripsMetadata = InferSelectModel<typeof NeuripsMetadata>;
 
 export const NeuripsPaper = pgTable(
   'neurips_papers',

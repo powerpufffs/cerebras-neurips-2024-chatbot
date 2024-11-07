@@ -24,14 +24,14 @@ import { Textarea } from '../ui/textarea';
 
 const suggestedActions = [
   {
-    title: 'What is the weather',
-    label: 'in San Francisco?',
-    action: 'What is the weather in San Francisco?',
+    title: 'What are the main findings',
+    label: 'of this paper?',
+    action: 'What are the main findings of this paper?',
   },
   {
-    title: 'Help me draft an essay',
-    label: 'about Silicon Valley',
-    action: 'Help me draft a short essay about Silicon Valley',
+    title: 'Explain the methodology',
+    label: 'used in this research',
+    action: 'Can you explain the methodology and experimental setup used in this research paper?',
   },
 ];
 
