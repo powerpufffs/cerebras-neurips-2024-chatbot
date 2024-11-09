@@ -177,7 +177,7 @@ export async function getPapers({
         .select()
         .from(NeuripsPaper)
         .where(eq(NeuripsPaper.id, id))
-        .limit(10);
+        .limit(1);
     }
 
     if (query) {

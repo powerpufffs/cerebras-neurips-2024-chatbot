@@ -1,5 +1,6 @@
 'use client';
 
+import { use } from 'react';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/utils';
 import BackButton from './backbutton';
@@ -21,13 +22,17 @@ interface Paper {
 }
 
 export default function PaperPage({ params }: { params: { id: string } }) {
+  const unwrappedParams = use<{ id: string }>(params);
   const [showChat, setShowChat] = useState(false);
 
   const {
     data: papers,
     error,
     isLoading,
-  } = useSWR<Array<NeuripsPapers>>(`/api/papers?id=${params.id}`, fetcher);
+  } = useSWR<Array<NeuripsPapers>>(
+    `/api/papers?id=${unwrappedParams.id}`,
+    fetcher
+  );
 
   const paper = papers?.[0];
 
@@ -121,14 +126,13 @@ export default function PaperPage({ params }: { params: { id: string } }) {
             )}
           </div>
         </article>
-
-        {paper.arxiv_id && showChat && (
+        {showChat && (
           <div className="mt-8">
             <Chat
               id={paper.id}
               initialMessages={[]}
               selectedModelId="llama3.1-70b"
-              arxivId={paper.arxiv_id}
+              arxivId={paper.arxiv_id ?? undefined}
             />
           </div>
         )}
