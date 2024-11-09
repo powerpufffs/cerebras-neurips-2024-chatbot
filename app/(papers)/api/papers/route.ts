@@ -1,10 +1,4 @@
-import { auth } from '@/app/(auth)/auth';
-import {
-  deleteDocumentsByIdAfterTimestamp,
-  getDocumentsById,
-  getPapers,
-  saveDocument,
-} from '@/db/queries';
+import { getPapers } from '@/db/queries';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
