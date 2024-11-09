@@ -80,24 +80,24 @@ export default function PaperPage({ params }: { params: { id: string } }) {
             )}
           </header>
           <section>
-            {paper.arxiv_id && (
-              <div className="flex gap-4">
-                <a
-                  href={`https://arxiv.org/pdf/${paper.arxiv_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
-                >
-                  View on arXiv
-                </a>
-                <button
-                  onClick={() => setShowChat(!showChat)}
-                  className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
-                >
-                  Chat with Paper
-                </button>
-              </div>
-            )}
+            {/* {paper.arxiv_id && ( */}
+            <div className="flex gap-4">
+              <a
+                href={`https://arxiv.org/pdf/${paper.arxiv_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
+              >
+                View on arXiv
+              </a>
+              <button
+                onClick={() => setShowChat(!showChat)}
+                className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
+              >
+                Chat with Paper
+              </button>
+            </div>
+            {/* )} */}
           </section>
           <section className="prose prose-slate max-w-none">
             <h2 className="text-2xl font-semibold mb-4 text-blue-600">

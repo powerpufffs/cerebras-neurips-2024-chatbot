@@ -122,22 +122,16 @@ export default function PapersPage() {
                       <h3 className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
                         {paper.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-[7]">
-                        {paper.abstract}
-                      </p>
-                      <div className="pt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="pt-2 mb-4 flex items-center gap-2 text-xs text-muted-foreground">
                         {paper.topic && (
                           <span className="bg-secondary px-2 py-1 rounded">
                             {paper.topic}
                           </span>
                         )}
-                        {paper.arxiv_id && (
-                          <span className="bg-secondary px-2 py-1 rounded flex items-center gap-1">
-                            <span>AI Chat</span>
-                            <span className="animate-pulse">✨</span>
-                          </span>
-                        )}
                       </div>
+                      <p className="text-sm mt-8 text-muted-foreground line-clamp-[7]">
+                        {paper.abstract}
+                      </p>
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />
                   </Link>
