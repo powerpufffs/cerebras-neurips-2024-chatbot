@@ -107,16 +107,16 @@ function PapersPageContent() {
             </div>
           )}
           {papers && !isLoading && (
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-x-hidden">
               <p className="text-muted-foreground text-lg -mb-4">
                 Search results for: {searchQuery}
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {papers.map((paper) => (
                   <Link
                     key={paper.id}
                     href={`/papers/${paper.id}`}
-                    className="group relative bg-card border shadow-sm overflow-hidden hover:shadow-lg hover:brightness-200 transition-all duration-200 p-4"
+                    className="group relative bg-card border rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-200 p-4"
                   >
                     <div className="p-4 space-y-2 relative">
                       <h3 className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
