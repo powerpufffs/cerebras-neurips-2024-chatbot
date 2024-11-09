@@ -31,10 +31,11 @@ export function Chat({
 }) {
   const { mutate } = useSWRConfig();
 
-  const { data, isLoading: isLoadingSuggestedQuestions } = useSWR(
-    id ? `/api/suggested-questions?id=${id}` : null,
-    fetcher
-  );
+  // const { data, isLoading: isLoadingSuggestedQuestions } = useSWR(
+  //   id ? `/api/suggested-questions?id=${id}` : null,
+  //   fetcher
+  // );
+  const data = null;
 
   const suggestedQuestions = useMemo(() => {
     return data ? JSON.parse(data).suggestions : null;

@@ -39,55 +39,55 @@ export default function PapersPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center p-4">
-      <motion.div
-        className="w-full flex flex-col items-center"
-        layout
-        animate={{
-          marginTop: isSearched ? '40px' : '40vh',
-        }}
-        transition={{
-          duration: 0.5,
-          type: 'spring',
-          stiffness: 100,
-          damping: 20,
-        }}
-      >
-        {!isSearched && (
-          <div className="mb-8 text-center">
-            <h1 className="mb-2 text-4xl font-bold">
-              NEURIPS Directory (2024)
-            </h1>
-            <p className="flex items-center justify-center -mt-8">
-              Powered by
-              <span>
-                <img
-                  src={CerebrasLogo.src}
-                  alt="Cerebras Logo"
-                  className="w-32 object-contain"
-                />
-              </span>
-            </p>
-          </div>
-        )}
+      <div className="w-full flex flex-col items-center">
+        <motion.div
+          className="w-full flex flex-col items-center"
+          initial={false}
+          animate={{
+            y: isSearched ? 0 : '30vh',
+          }}
+          transition={{
+            duration: 0.6,
+            ease: [0.32, 0.72, 0, 1],
+          }}
+        >
+          {!isSearched && (
+            <div className="mb-8 text-center">
+              <h1 className="mb-2 text-4xl font-bold">
+                NEURIPS Directory (2024)
+              </h1>
+              <p className="flex items-center justify-center -mt-8">
+                Powered by
+                <span>
+                  <img
+                    src={CerebrasLogo.src}
+                    alt="Cerebras Logo"
+                    className="w-32 object-contain"
+                  />
+                </span>
+              </p>
+            </div>
+          )}
 
-        <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-3">
-          <Input
-            type="search"
-            placeholder="Search research papers"
-            className="h-12 text-lg"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSearch();
-              }
-            }}
-          />
-          <Button variant={'outline'} className="h-12" onClick={handleSearch}>
-            Search
-          </Button>
-        </div>
-      </motion.div>
+          <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-3">
+            <Input
+              type="search"
+              placeholder="Search research papers"
+              className="h-12 text-lg"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
+            <Button variant={'outline'} className="h-12" onClick={handleSearch}>
+              Search
+            </Button>
+          </div>
+        </motion.div>
+      </div>
 
       {isSearched && (
         <motion.div
@@ -108,29 +108,21 @@ export default function PapersPage() {
           )}
           {papers && !isLoading && (
             <div className="space-y-6">
-              <p className="text-muted-foreground text-lg px-4 -mb-8">
+              <p className="text-muted-foreground text-lg -mb-4">
                 Search results for: {searchQuery}
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {papers.map((paper) => (
                   <Link
                     key={paper.id}
                     href={`/papers/${paper.id}`}
-                    className="group relative bg-card rounded-lg border shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-200"
+                    className="group relative bg-card border shadow-sm overflow-hidden hover:shadow-lg hover:brightness-200 transition-all duration-200 p-4"
                   >
-                    {/* <div className="aspect-[16/9] bg-gradient-to-br from-purple-500/20 to-blue-500/20" /> */}
-                    <Image
-                      src={`https://picsum.photos/800/450?technology,ai,science,${paper.id}`}
-                      alt="Research paper cover image"
-                      width={800}
-                      height={450}
-                      className="aspect-[16/9] object-cover"
-                    />
-                    <div className="p-4 space-y-2">
+                    <div className="p-4 space-y-2 relative">
                       <h3 className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
                         {paper.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-3">
+                      <p className="text-sm text-muted-foreground line-clamp-[7]">
                         {paper.abstract}
                       </p>
                       <div className="pt-2 flex items-center gap-2 text-xs text-muted-foreground">
@@ -140,13 +132,14 @@ export default function PapersPage() {
                           </span>
                         )}
                         {paper.arxiv_id && (
-                          <span className="bg-orange-950 px-2 py-1 rounded flex items-center gap-1">
+                          <span className="bg-secondary px-2 py-1 rounded flex items-center gap-1">
                             <span>AI Chat</span>
                             <span className="animate-pulse">✨</span>
                           </span>
                         )}
                       </div>
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />
                   </Link>
                 ))}
               </div>
