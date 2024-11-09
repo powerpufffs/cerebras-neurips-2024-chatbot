@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { fetcher } from '@/lib/utils';
 import { NeuripsPapers } from '@/db/schema';
 import { useQueryState } from 'nuqs';
@@ -13,7 +13,7 @@ import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import CerebrasLogo from '@/public/images/cerebras-logo.png';
 
-export default function PapersPage() {
+function PapersPageContent() {
   const [searchQuery, setSearchQuery] = useQueryState('query', {
     defaultValue: '',
     shallow: true,
@@ -142,5 +142,21 @@ export default function PapersPage() {
         </motion.div>
       )}
     </div>
+  );
+}
+
+export default function PapersPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col items-center p-4">
+          <div className="flex justify-center items-center min-h-[200px]">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        </div>
+      }
+    >
+      <PapersPageContent />
+    </Suspense>
   );
 }
