@@ -1,4 +1,3 @@
-import { auth } from '@/app/(auth)/auth';
 import {
   deleteDocumentsByIdAfterTimestamp,
   getDocumentsById,
@@ -13,7 +12,7 @@ export async function GET(request: Request) {
     return new Response('Missing id', { status: 400 });
   }
 
-  const session = await auth();
+  const session = null;
 
   if (!session || !session.user) {
     return new Response('Unauthorized', { status: 401 });

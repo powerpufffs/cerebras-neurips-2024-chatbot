@@ -1,4 +1,3 @@
-import { auth } from '@/app/(auth)/auth';
 import {
   deleteDocumentsByIdAfterTimestamp,
   getDocumentsById,
