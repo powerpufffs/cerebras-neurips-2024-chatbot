@@ -85,16 +85,17 @@ export default function PaperPage({ params }: { params: { id: string } }) {
             )}
           </header>
           <section>
-            {/* {paper.arxiv_id && ( */}
             <div className="flex gap-4">
-              <a
-                href={`https://arxiv.org/pdf/${paper.arxiv_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
-              >
-                View on arXiv
-              </a>
+              {paper.arxiv_id && (
+                <a
+                  href={`https://arxiv.org/abs/${paper.arxiv_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
+                >
+                  View on arXiv
+                </a>
+              )}
               <button
                 onClick={() => setShowChat(!showChat)}
                 className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
