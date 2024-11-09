@@ -7,6 +7,7 @@ import BackButton from './backbutton';
 import { Chat } from '@/components/custom/chat';
 import { useState } from 'react';
 import { NeuripsPapers } from '@/db/schema';
+import Link from 'next/link';
 
 interface Author {
   fullname: string;
@@ -23,7 +24,6 @@ interface Paper {
 
 export default function PaperPage({ params }: { params: { id: string } }) {
   const unwrappedParams = use<{ id: string }>(params);
-  const [showChat, setShowChat] = useState(false);
 
   const {
     data: papers,
@@ -96,14 +96,13 @@ export default function PaperPage({ params }: { params: { id: string } }) {
                   View on arXiv
                 </a>
               )}
-              <button
-                onClick={() => setShowChat(!showChat)}
-                className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
+              <Link
+                href={`/papers/${unwrappedParams.id}/chat${window.location.search}`}
+                className="inline-flex items-center px-4 py-2 bg-orange-900 text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
               >
-                Chat with Paper
-              </button>
+                Chat with Paper ✨
+              </Link>
             </div>
-            {/* )} */}
           </section>
           <section className="prose prose-slate max-w-none">
             <h2 className="text-2xl font-semibold mb-4 text-blue-600">
@@ -127,16 +126,6 @@ export default function PaperPage({ params }: { params: { id: string } }) {
             )}
           </div>
         </article>
-        {showChat && (
-          <div className="mt-8">
-            <Chat
-              id={paper.id}
-              initialMessages={[]}
-              selectedModelId="llama3.1-70b"
-              arxivId={paper.arxiv_id ?? undefined}
-            />
-          </div>
-        )}
       </div>
     </div>
   );

@@ -115,10 +115,10 @@ function PapersPageContent() {
                 {papers.map((paper) => (
                   <Link
                     key={paper.id}
-                    href={`/papers/${paper.id}`}
-                    className="group relative bg-card border rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-200 p-4"
+                    href={`/papers/${paper.id}${window.location.search}`}
+                    className="group relative bg-card border rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-200 p-1 sm:p-3"
                   >
-                    <div className="p-4 space-y-2 relative">
+                    <div className="p-2 sm:p-3 space-y-2 relative">
                       <h3 className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
                         {paper.name}
                       </h3>

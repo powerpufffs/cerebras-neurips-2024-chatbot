@@ -5,18 +5,17 @@ import { useCallback, useEffect, useState } from 'react';
 
 export default function BackButton() {
   const router = useRouter();
-  const [canGoBack, setCanGoBack] = useState(false);
+  const [searchParams, setSearchParams] = useState('');
 
   useEffect(() => {
-    // Check if we can go back by testing window.history
-    setCanGoBack(window.history.length > 1);
+    // Get current URL search params
+    const params = new URLSearchParams(window.location.search).toString();
+    setSearchParams(params ? `?${params}` : '');
   }, []);
-
-  if (!canGoBack) return null;
 
   return (
     <button
-      onClick={() => router.back()}
+      onClick={() => router.push(`/${searchParams}`)}
       className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
     >
       <svg

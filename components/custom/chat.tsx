@@ -73,7 +73,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 h-[600px] relative border rounded-lg">
+      <div className="flex flex-col min-w-0 h-full relative">
         <div
           ref={messagesContainerRef}
           className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto px-4 pt-8 scrollbar-thin scrollbar-thumb-secondary"
