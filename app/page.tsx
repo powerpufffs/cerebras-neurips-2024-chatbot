@@ -128,6 +128,9 @@ function PapersPageContent() {
                             {paper.topic}
                           </span>
                         )}
+                        <span className="bg-orange-950 px-2 py-1 rounded">
+                          AI Chat ✨
+                        </span>
                       </div>
                       <p className="text-sm mt-8 text-muted-foreground line-clamp-[7]">
                         {paper.abstract}
