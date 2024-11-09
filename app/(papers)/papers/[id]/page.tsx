@@ -66,7 +66,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
         <BackButton />
         <article className="space-y-8 mt-4">
           <header className="space-y-4">
-            <h1 className="text-4xl font-bold">{paper.name}</h1>
+            <h2 className="text-3xl md:text-4xl font-bold">{paper.name}</h2>
             {paper.authors && (
               <div className="flex flex-wrap gap-2 text-muted-foreground">
                 by
