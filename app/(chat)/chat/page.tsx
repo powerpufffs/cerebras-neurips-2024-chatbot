@@ -31,10 +31,8 @@ export default async function Page(props: { params: Promise<any> }) {
   // const messagesFromDb = await getMessagesByChatId({
   //   id,
   // });
-  const messagesFromDb: Array<Message> = []
-  const selectedModelId =
-    models.find((model) => model.id === localStorage.getItem('cerebras-neurips-model-pref'))?.id ||
-    DEFAULT_MODEL_NAME;
+  const messagesFromDb: Array<Message> = [];
+  const selectedModelId = DEFAULT_MODEL_NAME;
 
   return (
     <PreviewChat
