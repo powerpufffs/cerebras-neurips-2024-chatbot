@@ -23,13 +23,17 @@ export const Overview = () => {
         </h4>
         <p className="flex items-center justify-center -mt-16">
           Powered by
-          <span>
+          <a
+            href="https://cerebras.ai/inference"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <img
               src={CerebrasLogo.src}
               alt="Cerebras Logo"
               className="w-32 object-contain"
             />
-          </span>
+          </a>
         </p>
       </div>
     </motion.div>
