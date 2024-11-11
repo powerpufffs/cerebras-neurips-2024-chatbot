@@ -105,10 +105,10 @@ export default function PaperPage({ params }: { params: { id: string } }) {
             </div>
           </section>
           <section className="prose prose-slate max-w-none">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-600">
+            <h2 className="text-2xl font-semibold mb-4 text-slate-400">
               Abstract
             </h2>
-            <p className="text-lg leading-relaxed text-slate-400">
+            <p className="text-lg leading-relaxed text-slate-200">
               {paper.abstract}
             </p>
           </section>
