@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
   title: 'NEURIPS Navigator',
   description: 'Chat your way through the NEURIPS!',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export const viewport = {
