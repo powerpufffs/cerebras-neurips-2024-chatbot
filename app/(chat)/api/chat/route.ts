@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     ### ABSTRACT ###
     ${abstract ?? 'No abstract found'}
     ### END ABSTRACT ###;`;
+
   if (arxivId) {
     const chunks = await getRelevantChunks({
       arxivId,
@@ -59,8 +60,6 @@ export async function POST(request: Request) {
     ### END RELEVANT SECTIONS FROM THE PAPER ###
     `;
   }
-
-  console.log(newSystemPrompt);
 
   const result = await streamText({
     model: customModel(model.apiIdentifier),

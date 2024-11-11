@@ -53,12 +53,14 @@ function PapersPageContent() {
         >
           {!isSearched && (
             <div className="mb-8 text-center">
-              <h1 className="mb-2 text-4xl font-bold">
-                NEURIPS Directory (2024)
-              </h1>
+              <h1 className="mb-2 text-4xl font-bold">NEURIPS Navigator</h1>
               <p className="flex items-center justify-center -mt-8">
                 Powered by
-                <a href="https://cerebras.ai/inference" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://cerebras.ai/inference"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <img
                     src={CerebrasLogo.src}
                     alt="Cerebras Logo"

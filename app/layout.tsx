@@ -8,8 +8,8 @@ import './globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'NEURIPS Directory',
-  description: 'Chat your way through the NEURIPS 2024 directory!',
+  title: 'NEURIPS Navigator',
+  description: 'Chat your way through the NEURIPS!',
 };
 
 export const viewport = {
