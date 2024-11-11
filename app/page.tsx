@@ -121,13 +121,13 @@ function PapersPageContent() {
                   <Link
                     key={paper.id}
                     href={`/papers/${paper.id}${window.location.search}`}
-                    className="group relative bg-card border rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-200 p-1 sm:p-3"
+                    className="group relative bg-card border rounded-lg shadow-sm overflow-hidden hover:shadow-lg hover:brightness-[1.3] transition-all duration-100 p-1 sm:p-3"
                   >
                     <div className="p-2 sm:p-3 space-y-2 relative">
-                      <h3 className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
+                      <h3 className="font-medium line-clamp-2 transition-colors">
                         {paper.name}
                       </h3>
-                      <div className="pt-2 mb-4 flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="pt-2 mb-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <span className="bg-gradient-to-b from-orange-600 to-orange-900 px-2 py-1 rounded text-orange-100 hover:bg-secondary/80 transition-colors">
                           AI Chat ✨
                         </span>
