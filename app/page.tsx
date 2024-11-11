@@ -98,7 +98,10 @@ function PapersPageContent() {
         >
           {error && (
             <div className="p-4 border rounded-lg">
-              <p className="text-red-500">Error loading papers</p>
+              <p className="text-orange-600">
+                We couldn't find any papers that matched your query. Try a
+                different one 👆🏼!
+              </p>
             </div>
           )}
           {isLoading && (
@@ -123,14 +126,14 @@ function PapersPageContent() {
                         {paper.name}
                       </h3>
                       <div className="pt-2 mb-4 flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="bg-gradient-to-b from-orange-600 to-orange-900 px-2 py-1 rounded text-orange-100 hover:bg-secondary/80 transition-colors">
+                          AI Chat ✨
+                        </span>
                         {paper.topic && (
                           <span className="bg-secondary px-2 py-1 rounded">
                             {paper.topic}
                           </span>
                         )}
-                        <span className="bg-orange-950 px-2 py-1 rounded">
-                          AI Chat ✨
-                        </span>
                       </div>
                       <p className="text-sm mt-8 text-muted-foreground line-clamp-[7]">
                         {paper.abstract}

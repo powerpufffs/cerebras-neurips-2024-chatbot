@@ -98,7 +98,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
               )}
               <Link
                 href={`/papers/${unwrappedParams.id}/chat${window.location.search}`}
-                className="inline-flex items-center px-4 py-2 bg-orange-900 text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
+                className="inline-flex items-center bg-gradient-to-b from-orange-600 to-orange-900 px-4 py-1 text-orange-100 rounded-md hover:from-orange-500 hover:to-orange-800 hover:scale-[1.02] transition-all duration-200"
               >
                 Chat with Paper ✨
               </Link>
