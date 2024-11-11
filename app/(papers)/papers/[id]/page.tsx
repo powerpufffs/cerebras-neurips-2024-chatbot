@@ -86,6 +86,12 @@ export default function PaperPage({ params }: { params: { id: string } }) {
           </header>
           <section>
             <div className="flex gap-4">
+              <Link
+                href={`/papers/${unwrappedParams.id}/chat${window.location.search}`}
+                className="inline-flex items-center bg-gradient-to-b from-orange-600 to-orange-900 px-4 py-1 text-orange-100 rounded-md hover:from-orange-500 hover:to-orange-800 hover:scale-[1.02] transition-all duration-200"
+              >
+                Chat with Paper ✨
+              </Link>
               {paper.arxiv_id && (
                 <a
                   href={`https://arxiv.org/abs/${paper.arxiv_id}`}
@@ -96,12 +102,6 @@ export default function PaperPage({ params }: { params: { id: string } }) {
                   View on arXiv
                 </a>
               )}
-              <Link
-                href={`/papers/${unwrappedParams.id}/chat${window.location.search}`}
-                className="inline-flex items-center bg-gradient-to-b from-orange-600 to-orange-900 px-4 py-1 text-orange-100 rounded-md hover:from-orange-500 hover:to-orange-800 hover:scale-[1.02] transition-all duration-200"
-              >
-                Chat with Paper ✨
-              </Link>
             </div>
           </section>
           <section className="prose prose-slate max-w-none">
