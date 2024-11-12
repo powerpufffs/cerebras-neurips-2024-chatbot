@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { ThemeProvider } from '@/components/custom/theme-provider';
+import { Analytics } from '@vercel/analytics/react';
 
 import './globals.css';
 
@@ -71,6 +72,7 @@ export default async function RootLayout({
           >
             <Toaster position="top-center" />
             {children}
+            <Analytics />
           </ThemeProvider>
         </NuqsAdapter>
       </body>
