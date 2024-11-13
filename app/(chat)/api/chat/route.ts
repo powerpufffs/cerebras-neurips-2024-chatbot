@@ -3,7 +3,7 @@ import { initLogger } from 'braintrust';
 
 import { customModel } from '@/ai';
 import { models } from '@/ai/models';
-import { regularPrompt } from '@/ai/prompts';
+import { technicalPaperPrompt } from '@/ai/prompts';
 import { getPapers, getRelevantChunks } from '@/db/queries';
 
 // Initialize Braintrust logger
@@ -43,9 +43,7 @@ export async function POST(request: Request) {
     }
 
     // Get the abstract from the paper
-    console.log('🔥🔥🔥🔥🔥 Getting paper');
     const paper = await getPapers({ id });
-    // console.log('🔥🔥🔥🔥🔥 Got paper', { paper });
     let abstract = paper[0]?.abstract;
 
     // Log the input state with more context details
@@ -54,7 +52,7 @@ export async function POST(request: Request) {
         messages: coreMessages,
         modelId,
         arxivId,
-        basePrompt: regularPrompt,
+        basePrompt: technicalPaperPrompt,
         abstract: abstract ?? 'No abstract found',
       },
       metadata: {
@@ -65,10 +63,10 @@ export async function POST(request: Request) {
     const streamingData = new StreamData();
 
     // Get relevant chunks from the paper based on user's last message
-    let newSystemPrompt = `${regularPrompt}
-      ### ABSTRACT ###
+    let newSystemPrompt = `${technicalPaperPrompt}
+      <ABSTRACT>
       ${abstract ?? 'No abstract found'}
-      ### END ABSTRACT ###;`;
+      </ABSTRACT>`;
 
     if (arxivId) {
       const chunks = await getRelevantChunks({
@@ -94,9 +92,9 @@ export async function POST(request: Request) {
       // Add chunks to system prompt
       newSystemPrompt = `${newSystemPrompt}
       
-      ### RELEVANT SECTIONS FROM THE PAPER ###
+      <RelevantSectionsFromPaper>
       ${chunks.map((chunk) => chunk.text).join('\n\n')}
-      ### END RELEVANT SECTIONS FROM THE PAPER ###
+      </RelevantSectionsFromPaper>
       `;
     }
 
@@ -109,8 +107,6 @@ export async function POST(request: Request) {
         },
       },
     });
-
-    console.log({ newSystemPrompt });
 
     const result = await streamText({
       model: customModel(model.apiIdentifier),
