@@ -5,6 +5,7 @@ import { and, asc, cosineDistance, desc, eq, gt, sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import OpenAI from 'openai';
+import * as weave from 'weave';
 
 import {
   user,
@@ -32,6 +33,14 @@ interface EmbeddingResponse {
   embedding: number[];
   error?: string;
 }
+
+// Initialize wrapped OpenAI client with Weave
+const openai = weave.wrapOpenAI(
+  new OpenAI({
+    apiKey: process.env.CEREBRAS_API_KEY,
+    baseURL: 'https://api.cerebras.ai/v1',
+  })
+);
 
 export async function embedString(text: string): Promise<EmbeddingResponse> {
   try {
@@ -70,13 +79,11 @@ export async function embedString(text: string): Promise<EmbeddingResponse> {
   }
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.CEREBRAS_API_KEY,
-  baseURL: 'https://api.cerebras.ai/v1',
-});
-
 export async function getSuggestedQuestions({ id }: { id: string }) {
   try {
+    // Initialize Weave project
+    await weave.init('NEURIPS Navigator');
+
     // Get paper abstract from database
     const paper = await db
       .select({ abstract: NeuripsPaper.abstract })
@@ -90,7 +97,7 @@ export async function getSuggestedQuestions({ id }: { id: string }) {
 
     const abstract = paper[0].abstract;
 
-    // Generate questions using OpenAI
+    // The OpenAI call will now be automatically tracked by Weave
     const response = await openai.chat.completions.create({
       model: 'llama3.1-70b',
       response_format: { type: 'json_object' },
