@@ -6,6 +6,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import OpenAI from 'openai';
 import * as weave from 'weave';
+import { initLogger, wrapOpenAI, wrapTraced } from 'braintrust';
 
 import {
   user,
@@ -34,8 +35,15 @@ interface EmbeddingResponse {
   error?: string;
 }
 
-// Initialize wrapped OpenAI client with Weave
-const openai = weave.wrapOpenAI(
+// Initialize Braintrust logger
+const logger = initLogger({
+  projectName: 'NEURIPS Navigator',
+  apiKey: process.env.BRAINTRUST_API_KEY,
+  asyncFlush: true, // Enable background batching
+});
+
+// Modify OpenAI initialization to use Braintrust wrapped client
+const openai = wrapOpenAI(
   new OpenAI({
     apiKey: process.env.CEREBRAS_API_KEY,
     baseURL: 'https://api.cerebras.ai/v1',
@@ -79,32 +87,31 @@ export async function embedString(text: string): Promise<EmbeddingResponse> {
   }
 }
 
-export async function getSuggestedQuestions({ id }: { id: string }) {
-  try {
-    // Initialize Weave project
-    await weave.init('NEURIPS Navigator');
+// Wrap getSuggestedQuestions with Braintrust tracing
+export const getSuggestedQuestions = wrapTraced(
+  async function getSuggestedQuestions({ id }: { id: string }) {
+    try {
+      // Get paper abstract from database
+      const paper = await db
+        .select({ abstract: NeuripsPaper.abstract })
+        .from(NeuripsPaper)
+        .where(eq(NeuripsPaper.id, id))
+        .limit(1);
 
-    // Get paper abstract from database
-    const paper = await db
-      .select({ abstract: NeuripsPaper.abstract })
-      .from(NeuripsPaper)
-      .where(eq(NeuripsPaper.id, id))
-      .limit(1);
+      if (!paper || paper.length === 0) {
+        throw new Error('Paper not found');
+      }
 
-    if (!paper || paper.length === 0) {
-      throw new Error('Paper not found');
-    }
+      const abstract = paper[0].abstract;
 
-    const abstract = paper[0].abstract;
-
-    // The OpenAI call will now be automatically tracked by Weave
-    const response = await openai.chat.completions.create({
-      model: 'llama3.1-70b',
-      response_format: { type: 'json_object' },
-      messages: [
-        {
-          role: 'system',
-          content: `You are a helpful research assistant. Given a paper abstract, generate 3 insightful questions about the paper. Return them in JSON format with the following structure:
+      // The OpenAI call will now be automatically tracked by Weave
+      const response = await openai.chat.completions.create({
+        model: 'llama3.1-70b',
+        response_format: { type: 'json_object' },
+        messages: [
+          {
+            role: 'system',
+            content: `You are a helpful research assistant. Given a paper abstract, generate 3 insightful questions about the paper. Return them in JSON format with the following structure:
             {
               "suggestions": [
                 {
@@ -125,20 +132,21 @@ export async function getSuggestedQuestions({ id }: { id: string }) {
                 },
               ]
             }`,
-        },
-        {
-          role: 'user',
-          content: `Generate 3 questions about this paper abstract: ${abstract}`,
-        },
-      ],
-    });
+          },
+          {
+            role: 'user',
+            content: `Generate 3 questions about this paper abstract: ${abstract}`,
+          },
+        ],
+      });
 
-    return response.choices[0].message.content;
-  } catch (error) {
-    console.error('Error generating suggested questions:', error);
-    throw error;
+      return response.choices[0].message.content;
+    } catch (error) {
+      console.error('Error generating suggested questions:', error);
+      throw error;
+    }
   }
-}
+);
 
 export async function getRelevantChunks({
   arxivId,
