@@ -198,6 +198,7 @@ export async function getPapers({
     if (query) {
       // Use to_tsquery for full-text search
       const sanitizedQuery = query.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+      console.log('🔥🔥🔥🔥🔥 Searching for', { sanitizedQuery, query });
 
       return await db
         .select()

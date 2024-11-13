@@ -42,6 +42,12 @@ export async function POST(request: Request) {
       return new Response('No user message found', { status: 400 });
     }
 
+    // Get the abstract from the paper
+    console.log('🔥🔥🔥🔥🔥 Getting paper');
+    const paper = await getPapers({ id });
+    // console.log('🔥🔥🔥🔥🔥 Got paper', { paper });
+    let abstract = paper[0]?.abstract;
+
     // Log the input state with more context details
     span.log({
       input: {
@@ -55,10 +61,6 @@ export async function POST(request: Request) {
         paperId: id,
       },
     });
-
-    // Get the abstract from the paper
-    const paper = await getPapers({ id });
-    let abstract = paper[0]?.abstract;
 
     const streamingData = new StreamData();
 
@@ -90,7 +92,7 @@ export async function POST(request: Request) {
       });
 
       // Add chunks to system prompt
-      newSystemPrompt = `${regularPrompt}
+      newSystemPrompt = `${newSystemPrompt}
       
       ### RELEVANT SECTIONS FROM THE PAPER ###
       ${chunks.map((chunk) => chunk.text).join('\n\n')}
@@ -107,6 +109,8 @@ export async function POST(request: Request) {
         },
       },
     });
+
+    console.log({ newSystemPrompt });
 
     const result = await streamText({
       model: customModel(model.apiIdentifier),
