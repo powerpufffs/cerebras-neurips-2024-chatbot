@@ -159,6 +159,9 @@ export async function getRelevantChunks({
     const { embedding } = await embedString(query);
     const similarity = sql<number>`1 - (${cosineDistance(NeuripsMetadata.embedding, embedding)})`;
 
+    console.log({ embedding });
+    console.log({ similarity });
+
     const res = await db
       .select({
         text: NeuripsMetadata.text,
@@ -168,12 +171,12 @@ export async function getRelevantChunks({
       .from(NeuripsMetadata)
       .where(
         and(
-          gt(similarity, 0.5),
+          gt(similarity, 0.4),
           sql`${NeuripsMetadata.metadata}->>'arxiv_id' = ${arxivId}`
         )
       )
       .orderBy(desc(similarity))
-      .limit(3);
+      .limit(6);
 
     return res;
   } catch (error) {
