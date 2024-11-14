@@ -12,6 +12,31 @@ import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import CerebrasLogo from '@/public/images/cerebras-logo.png';
+import Text2SVG from 'react-hook-mathjax';
+
+export const renderLatexText = (text: string) => {
+  if (!text) return null;
+
+  const parts = text.split(/(\$[^\$]+\$)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('$') && part.endsWith('$')) {
+      const latex = part.slice(1, -1);
+      return (
+        <span 
+          key={i} 
+          style={{ 
+            display: 'inline-flex', 
+            alignItems: 'baseline', 
+            verticalAlign: 'baseline'
+          }}
+        >
+          <Text2SVG display="inline" latex={latex} />
+        </span>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
 
 function PapersPageContent() {
   const [searchQuery, setSearchQuery] = useQueryState('query', {
@@ -164,7 +189,7 @@ function PapersPageContent() {
                   >
                     <div className="p-2 sm:p-3 space-y-2 relative">
                       <h3 className="font-medium line-clamp-2 transition-colors">
-                        {paper.name}
+                        {renderLatexText(paper.name ?? '')}
                       </h3>
                       <div className="pt-2 mb-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <span className="bg-gradient-to-b from-orange-600 to-orange-900 px-2 py-1 rounded text-orange-100 hover:bg-secondary/80 transition-colors">
@@ -177,7 +202,7 @@ function PapersPageContent() {
                         )}
                       </div>
                       <p className="text-sm mt-8 text-muted-foreground line-clamp-[7]">
-                        {paper.abstract}
+                        {renderLatexText(paper.abstract)}
                       </p>
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />

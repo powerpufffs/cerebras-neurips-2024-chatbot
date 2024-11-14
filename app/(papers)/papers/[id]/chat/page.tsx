@@ -6,6 +6,7 @@ import { fetcher } from '@/lib/utils';
 import Link from 'next/link';
 import { Chat } from '@/components/custom/chat';
 import { NeuripsPapers } from '@/db/schema';
+import { renderLatexText } from '@/app/page';
 
 export default function PaperChatPage({ params }: { params: { id: string } }) {
   const unwrappedParams = use<{ id: string }>(params);
@@ -48,7 +49,9 @@ export default function PaperChatPage({ params }: { params: { id: string } }) {
             </svg>
             Back to Paper
           </Link>
-          <h1 className="text-lg font-semibold  mt-4">{paper.name}</h1>
+          <h1 className="text-lg font-semibold mt-4">
+            {renderLatexText(paper.name)}
+          </h1>
           <div className="w-[100px]" />
         </div>
       </div>

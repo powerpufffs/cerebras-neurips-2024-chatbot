@@ -8,6 +8,8 @@ import { Chat } from '@/components/custom/chat';
 import { useState } from 'react';
 import { NeuripsPapers } from '@/db/schema';
 import Link from 'next/link';
+import Text2SVG from 'react-hook-mathjax';
+import { renderLatexText } from '@/app/page';
 
 interface Author {
   fullname: string;
@@ -67,7 +69,9 @@ export default function PaperPage({ params }: { params: { id: string } }) {
         <BackButton />
         <article className="space-y-8 mt-4">
           <header className="space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold">{paper.name}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              {renderLatexText(paper.name)}
+            </h2>
             {paper.authors && (
               <div className="flex flex-wrap gap-2 text-muted-foreground">
                 by
@@ -175,7 +179,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
               Abstract
             </h2>
             <p className="text-lg leading-relaxed text-slate-200">
-              {paper.abstract}
+              {renderLatexText(paper.abstract)}
             </p>
           </section>
 

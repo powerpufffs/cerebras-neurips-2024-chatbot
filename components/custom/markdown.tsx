@@ -1,110 +1,101 @@
-import Link from "next/link";
-import React, { memo } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Link from 'next/link';
+import React, { memo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import Text2SVG from 'react-hook-mathjax';
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+  const renderLatexInText = (text: string) => {
+    if (typeof text !== 'string') return text;
+    
+    const parts = text.split(/(\$[^\$]+\$)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('$') && part.endsWith('$')) {
+        const latex = part.slice(1, -1);
+        return (
+          <span 
+            key={i} 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'baseline', 
+              verticalAlign: 'baseline'
+            }}
+          >
+            <Text2SVG display="inline" latex={latex} />
+          </span>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  };
+
+  const withLatexSupport = (Component: any, className: string) => {
+    return ({ node, children, ...props }: any) => (
+      <Component className={className} {...props}>
+        {React.Children.map(children, child =>
+          typeof child === 'string' ? renderLatexInText(child) : child
+        )}
+      </Component>
+    );
+  };
+
   const components = {
     code: ({ node, inline, className, children, ...props }: any) => {
-      const match = /language-(\w+)/.exec(className || "");
+      const match = /language-(\w+)/.exec(className || '');
       return !inline && match ? (
         <pre
           {...props}
           className={`${className} text-sm w-[80dvw] md:max-w-[500px] overflow-x-scroll bg-zinc-100 p-3 rounded-lg mt-2 dark:bg-zinc-800`}
         >
-          <code className={match[1]}>{children}</code>
+          <code className={match[1]}>
+            {React.Children.map(children, child =>
+              typeof child === 'string' ? renderLatexInText(child) : child
+            )}
+          </code>
         </pre>
       ) : (
         <code
           className={`${className} text-sm bg-zinc-100 dark:bg-zinc-800 py-0.5 px-1 rounded-md`}
           {...props}
         >
-          {children}
+          {React.Children.map(children, child =>
+            typeof child === 'string' ? renderLatexInText(child) : child
+          )}
         </code>
       );
     },
-    ol: ({ node, children, ...props }: any) => {
-      return (
-        <ol className="list-decimal list-outside ml-4" {...props}>
-          {children}
-        </ol>
-      );
-    },
-    li: ({ node, children, ...props }: any) => {
-      return (
-        <li className="py-1" {...props}>
-          {children}
-        </li>
-      );
-    },
-    ul: ({ node, children, ...props }: any) => {
-      return (
-        <ul className="list-decimal list-outside ml-4" {...props}>
-          {children}
-        </ul>
-      );
-    },
-    strong: ({ node, children, ...props }: any) => {
-      return (
-        <span className="font-semibold" {...props}>
-          {children}
-        </span>
-      );
-    },
-    a: ({ node, children, ...props }: any) => {
-      return (
-        <Link
-          className="text-blue-500 hover:underline"
-          target="_blank"
-          rel="noreferrer"
-          {...props}
-        >
-          {children}
-        </Link>
-      );
-    },
-    h1: ({ node, children, ...props }: any) => {
-      return (
-        <h1 className="text-3xl font-semibold mt-6 mb-2" {...props}>
-          {children}
-        </h1>
-      );
-    },
-    h2: ({ node, children, ...props }: any) => {
-      return (
-        <h2 className="text-2xl font-semibold mt-6 mb-2" {...props}>
-          {children}
-        </h2>
-      );
-    },
-    h3: ({ node, children, ...props }: any) => {
-      return (
-        <h3 className="text-xl font-semibold mt-6 mb-2" {...props}>
-          {children}
-        </h3>
-      );
-    },
-    h4: ({ node, children, ...props }: any) => {
-      return (
-        <h4 className="text-lg font-semibold mt-6 mb-2" {...props}>
-          {children}
-        </h4>
-      );
-    },
-    h5: ({ node, children, ...props }: any) => {
-      return (
-        <h5 className="text-base font-semibold mt-6 mb-2" {...props}>
-          {children}
-        </h5>
-      );
-    },
-    h6: ({ node, children, ...props }: any) => {
-      return (
-        <h6 className="text-sm font-semibold mt-6 mb-2" {...props}>
-          {children}
-        </h6>
-      );
-    },
+    p: withLatexSupport('p', ''),
+    strong: withLatexSupport('span', 'font-semibold'),
+    em: withLatexSupport('em', ''),
+    h1: withLatexSupport('h1', 'text-3xl font-semibold mt-6 mb-2'),
+    h2: withLatexSupport('h2', 'text-2xl font-semibold mt-6 mb-2'),
+    h3: withLatexSupport('h3', 'text-xl font-semibold mt-6 mb-2'),
+    h4: withLatexSupport('h4', 'text-lg font-semibold mt-6 mb-2'),
+    h5: withLatexSupport('h5', 'text-base font-semibold mt-6 mb-2'),
+    h6: withLatexSupport('h6', 'text-sm font-semibold mt-6 mb-2'),
+    li: withLatexSupport('li', 'py-1'),
+    a: ({ node, children, ...props }: any) => (
+      <Link
+        className="text-blue-500 hover:underline"
+        target="_blank"
+        rel="noreferrer"
+        {...props}
+      >
+        {React.Children.map(children, child =>
+          typeof child === 'string' ? renderLatexInText(child) : child
+        )}
+      </Link>
+    ),
+    ol: ({ node, children, ...props }: any) => (
+      <ol className="list-decimal list-outside ml-4" {...props}>
+        {children}
+      </ol>
+    ),
+    ul: ({ node, children, ...props }: any) => (
+      <ul className="list-decimal list-outside ml-4" {...props}>
+        {children}
+      </ul>
+    ),
   };
 
   return (
@@ -116,5 +107,5 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
 );
