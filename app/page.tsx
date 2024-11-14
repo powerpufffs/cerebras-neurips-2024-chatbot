@@ -38,7 +38,7 @@ function PapersPageContent() {
   };
 
   const sampleQueries = [
-    'Medical industry research',
+    'Mixture of experts',
     'Computer vision and transformers',
     'Reinforcement learning for robotics',
   ];
