@@ -108,9 +108,9 @@ export default function PaperPage({ params }: { params: { id: string } }) {
           {paper.huggingface_metadata?.models &&
             paper.huggingface_metadata.models.length > 0 && (
               <section>
-                <h2 className="text-2xl font-semibold mb-4 text-slate-400">
+                <h4 className="text-lg font-semibold mb-4 text-slate-400">
                   Related HuggingFace 🤗 Models
-                </h2>
+                </h4>
                 <div className="relative">
                   <div
                     id="left-fade"
@@ -171,7 +171,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
               </section>
             )}
           <section className="prose prose-slate max-w-none">
-            <h2 className="text-2xl font-semibold mb-4 text-slate-400">
+            <h2 className="text-lg font-semibold mb-4 text-slate-400">
               Abstract
             </h2>
             <p className="text-lg leading-relaxed text-slate-200">
