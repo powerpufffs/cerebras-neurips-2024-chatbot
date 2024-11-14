@@ -35,6 +35,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
   );
 
   const paper = papers?.[0];
+  console.log({ paper });
 
   if (isLoading) {
     return (
@@ -104,6 +105,71 @@ export default function PaperPage({ params }: { params: { id: string } }) {
               )}
             </div>
           </section>
+          {paper.huggingface_metadata?.models &&
+            paper.huggingface_metadata.models.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-semibold mb-4 text-slate-400">
+                  Related HuggingFace 🤗 Models
+                </h2>
+                <div className="relative">
+                  <div
+                    id="left-fade"
+                    className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-10 opacity-0 transition-opacity"
+                  />
+                  <div
+                    className="flex gap-4 overflow-x-auto pb-4"
+                    onScroll={(e) => {
+                      const target = e.currentTarget;
+                      const leftFade = document.getElementById('left-fade');
+                      const rightFade = document.getElementById('right-fade');
+
+                      if (leftFade) {
+                        leftFade.style.opacity =
+                          target.scrollLeft > 0 ? '1' : '0';
+                      }
+                      if (rightFade) {
+                        rightFade.style.opacity =
+                          target.scrollLeft <
+                          target.scrollWidth - target.clientWidth
+                            ? '1'
+                            : '0';
+                      }
+                    }}
+                  >
+                    {paper.huggingface_metadata.models.map((model) => (
+                      <a
+                        key={model.id}
+                        href={`https://huggingface.co/${model.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-none bg-secondary/50 hover:bg-secondary/70 transition-colors rounded-lg p-4 space-y-2"
+                      >
+                        <div className="font-medium">{model.id}</div>
+                        <div className="text-sm font-semibold text-background bg-muted-foreground/80 px-2 py-0.5 rounded-md w-fit">
+                          {model.library_name?.charAt(0).toUpperCase() +
+                            model.library_name?.slice(1)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="w-4 h-4 inline-block align-text-bottom mr-1"
+                          >
+                            <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                          </svg>
+                          {model.likes.toLocaleString()}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                  <div
+                    id="right-fade"
+                    className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10 opacity-0 transition-opacity"
+                  />
+                </div>
+              </section>
+            )}
           <section className="prose prose-slate max-w-none">
             <h2 className="text-2xl font-semibold mb-4 text-slate-400">
               Abstract
