@@ -1,10 +1,11 @@
 import { convertToCoreMessages, Message, StreamData, streamText } from 'ai';
-import { initLogger } from 'braintrust';
+import { initLogger, invoke } from 'braintrust';
 
 import { customModel } from '@/ai';
 import { models } from '@/ai/models';
 import { technicalPaperPrompt } from '@/ai/prompts';
 import { getPapers, getRelevantChunks } from '@/db/queries';
+import { BraintrustAdapter } from '@braintrust/vercel-ai-sdk';
 
 // Initialize Braintrust logger
 const logger = initLogger({
@@ -16,7 +17,9 @@ const logger = initLogger({
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
+  console.log('step 1: starting POST request handler');
   return logger.traced(async (span) => {
+    console.log('step 2: parsing request JSON body');
     const {
       id,
       messages,
@@ -29,24 +32,28 @@ export async function POST(request: Request) {
       arxivId?: string;
     } = await request.json();
 
+    console.log('step 3: finding model by ID', { modelId });
     const model = models.find((model) => model.id === modelId);
 
     if (!model) {
+      console.log('step 3 error: model not found');
       return new Response('Model not found', { status: 404 });
     }
 
+    console.log('step 4: converting messages to core format');
     const coreMessages = convertToCoreMessages(messages);
     const userMessage = coreMessages[coreMessages.length - 1];
 
     if (!userMessage) {
+      console.log('step 4 error: no user message found');
       return new Response('No user message found', { status: 400 });
     }
 
-    // Get the abstract from the paper
+    console.log('step 5: fetching paper details', { id });
     const paper = await getPapers({ id });
     let abstract = paper[0]?.abstract;
 
-    // Log the input state with more context details
+    console.log('step 6: logging input state to span');
     span.log({
       input: {
         messages: coreMessages,
@@ -60,22 +67,41 @@ export async function POST(request: Request) {
       },
     });
 
+    console.log('step 7: initializing streaming data');
     const streamingData = new StreamData();
 
-    // Get relevant chunks from the paper based on user's last message
+    console.log('step 8: building system prompt with paper details');
     let newSystemPrompt = `${technicalPaperPrompt}
+      <AUTHORS>
+      ${
+        paper[0]?.authors
+          ?.map(
+            (author) => `
+        <AUTHOR>
+          <NAME>${author.fullname}</NAME>
+          <INSTITUTION>${author.institution}</INSTITUTION>
+          ${author.bio ? `<BIO>${author.bio}</BIO>` : ''}
+          <URL>${author.url}</URL>
+        </AUTHOR>`
+          )
+          .join('\n') ?? 'No authors found'
+      }
+      </AUTHORS>
       <ABSTRACT>
       ${abstract ?? 'No abstract found'}
       </ABSTRACT>`;
 
     if (arxivId) {
+      console.log('step 9: fetching relevant chunks for arxiv paper', {
+        arxivId,
+      });
       const chunks = await getRelevantChunks({
         arxivId,
         query: userMessage.content as string,
       });
       abstract = chunks[0]?.metadata?.abstract;
 
-      // Log the retrieved chunks
+      console.log('step 10: logging retrieved chunks to span');
       span.log({
         metadata: {
           contextChunks: {
@@ -83,13 +109,13 @@ export async function POST(request: Request) {
             chunks: chunks.map((chunk) => ({
               text: chunk.text,
               metadata: chunk.metadata,
-              score: chunk.similarity, // if available
+              score: chunk.similarity,
             })),
           },
         },
       });
 
-      // Add chunks to system prompt
+      console.log('step 11: adding chunks to system prompt');
       newSystemPrompt = `${newSystemPrompt}
       
       <RelevantSectionsFromPaper>
@@ -98,7 +124,7 @@ export async function POST(request: Request) {
       `;
     }
 
-    // Log the final system prompt
+    console.log('step 12: logging final system prompt');
     span.log({
       metadata: {
         systemPrompt: {
@@ -108,15 +134,16 @@ export async function POST(request: Request) {
       },
     });
 
-    const result = await streamText({
+    console.log('step 13: starting text stream');
+    const stream = await streamText({
       model: customModel(model.apiIdentifier),
       system: newSystemPrompt,
       messages: coreMessages,
       maxSteps: 5,
       onFinish: async (res) => {
-        // Log the final output when streaming completes
+        console.log('step 14: stream finished, logging final output');
         span.log({
-          output: streamingData.toString(),
+          output: res.text,
           metadata: {
             modelUsed: model.apiIdentifier,
             tokensUsed: res.usage.totalTokens,
@@ -130,7 +157,8 @@ export async function POST(request: Request) {
       },
     });
 
-    return result.toDataStreamResponse({
+    console.log('step 15: returning stream response');
+    return stream.toDataStreamResponse({
       data: streamingData,
     });
   });

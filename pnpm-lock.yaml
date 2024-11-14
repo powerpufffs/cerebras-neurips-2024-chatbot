@@ -11,6 +11,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^0.0.60
         version: 0.0.60(zod@3.23.8)
+      '@braintrust/vercel-ai-sdk':
+        specifier: ^0.0.4
+        version: 0.0.4(braintrust@0.0.168(openai@4.71.1(zod@3.23.8))(react@19.0.0-rc-45804af1-20241021)(sswr@2.1.0(svelte@5.1.3))(svelte@5.1.3)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8))(openai@4.71.1(zod@3.23.8))(react@19.0.0-rc-45804af1-20241021)(sswr@2.1.0(svelte@5.1.3))(svelte@5.1.3)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8)
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@19.0.0-rc-45804af1-20241021(react@19.0.0-rc-45804af1-20241021))(react@19.0.0-rc-45804af1-20241021)
@@ -364,6 +367,11 @@ packages:
 
   '@braintrust/core@0.0.64':
     resolution: {integrity: sha512-3GDFPLepeXL7dB4LvL7itZfLZc5fVOSGM5fL4tCX2wsaCHcYwEG2LycdfyAnLzsuq33i9ENW4AWowfyv2yaM3w==}
+
+  '@braintrust/vercel-ai-sdk@0.0.4':
+    resolution: {integrity: sha512-Yf08NFT7NitIh3KQQ0v1Itg5TgUc2/otlyyz8yg8wlnywu+XsZWw/Fj2/yODKW/szgpNIc+fGvuZtb+EejD5Fg==}
+    peerDependencies:
+      braintrust: '>=0.0.141'
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -4152,6 +4160,20 @@ snapshots:
       '@asteasolutions/zod-to-openapi': 6.4.0(zod@3.23.8)
       uuid: 9.0.1
       zod: 3.23.8
+
+  '@braintrust/vercel-ai-sdk@0.0.4(braintrust@0.0.168(openai@4.71.1(zod@3.23.8))(react@19.0.0-rc-45804af1-20241021)(sswr@2.1.0(svelte@5.1.3))(svelte@5.1.3)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8))(openai@4.71.1(zod@3.23.8))(react@19.0.0-rc-45804af1-20241021)(sswr@2.1.0(svelte@5.1.3))(svelte@5.1.3)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8)':
+    dependencies:
+      '@ai-sdk/provider': 0.0.11
+      ai: 3.4.33(openai@4.71.1(zod@3.23.8))(react@19.0.0-rc-45804af1-20241021)(sswr@2.1.0(svelte@5.1.3))(svelte@5.1.3)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8)
+      braintrust: 0.0.168(openai@4.71.1(zod@3.23.8))(react@19.0.0-rc-45804af1-20241021)(sswr@2.1.0(svelte@5.1.3))(svelte@5.1.3)(vue@3.5.12(typescript@5.6.3))(zod@3.23.8)
+    transitivePeerDependencies:
+      - openai
+      - react
+      - solid-js
+      - sswr
+      - svelte
+      - vue
+      - zod
 
   '@drizzle-team/brocli@0.10.2': {}
 

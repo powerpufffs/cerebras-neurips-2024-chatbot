@@ -159,9 +159,6 @@ export async function getRelevantChunks({
     const { embedding } = await embedString(query);
     const similarity = sql<number>`1 - (${cosineDistance(NeuripsMetadata.embedding, embedding)})`;
 
-    console.log({ embedding });
-    console.log({ similarity });
-
     const res = await db
       .select({
         text: NeuripsMetadata.text,
