@@ -101,19 +101,28 @@ function PapersPageContent() {
             </div>
 
             {!isSearched && (
-              <div className="flex flex-col gap-2 justify-center mt-2">
+              <div className="grid sm:grid-cols-3 gap-2 w-full mt-4">
                 {sampleQueries.map((query, i) => (
-                  <button
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ delay: 0.05 * i }}
                     key={i}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    onClick={() => {
-                      setInputValue(query);
-                      setSearchQuery(query);
-                      setIsSearched(true);
-                    }}
+                    className={i > 1 ? 'hidden sm:block' : 'block'}
                   >
-                    "{query}"
-                  </button>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setInputValue(query);
+                        setSearchQuery(query);
+                        setIsSearched(true);
+                      }}
+                      className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 sm:flex-col w-full h-full justify-start items-start break-words whitespace-normal"
+                    >
+                      <span className="text-muted-foreground">"{query}"</span>
+                    </Button>
+                  </motion.div>
                 ))}
               </div>
             )}
