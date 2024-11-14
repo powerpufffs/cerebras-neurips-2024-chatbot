@@ -37,6 +37,12 @@ function PapersPageContent() {
     setSearchQuery(inputValue);
   };
 
+  const sampleQueries = [
+    'Medical industry research',
+    'Computer vision and transformers',
+    'Reinforcement learning for robotics',
+  ];
+
   return (
     <div className="flex min-h-screen flex-col items-center p-4">
       <div className="w-full flex flex-col items-center">
@@ -71,22 +77,46 @@ function PapersPageContent() {
             </div>
           )}
 
-          <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-3">
-            <Input
-              type="search"
-              placeholder="Search research papers"
-              className="h-12 text-lg"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-            />
-            <Button variant={'outline'} className="h-12" onClick={handleSearch}>
-              Search
-            </Button>
+          <div className="w-full max-w-2xl flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                type="search"
+                placeholder="Search research papers"
+                className="h-12 text-lg"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch();
+                  }
+                }}
+              />
+              <Button
+                variant={'outline'}
+                className="h-12"
+                onClick={handleSearch}
+              >
+                Search
+              </Button>
+            </div>
+
+            {!isSearched && (
+              <div className="flex flex-col gap-2 justify-center mt-2">
+                {sampleQueries.map((query, i) => (
+                  <button
+                    key={i}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => {
+                      setInputValue(query);
+                      setSearchQuery(query);
+                      setIsSearched(true);
+                    }}
+                  >
+                    "{query}"
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
