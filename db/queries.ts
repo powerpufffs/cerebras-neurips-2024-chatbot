@@ -50,41 +50,78 @@ const openai = wrapOpenAI(
   })
 );
 
-export async function embedString(text: string): Promise<EmbeddingResponse> {
-  try {
-    // Clean the text (similar to the Python version)
-    const cleanText = text
-      .replace(/\x00/g, '')
-      .replace(/\x01/g, '')
-      .replace(/\x02/g, '')
-      .replace(/\x03/g, '');
+interface EmbeddingResponse {
+  embedding: number[];
+  error?: string;
+}
 
-    // Generate embedding via API call
-    const response = await fetch(
-      'https://api-inference.huggingface.co/models/BAAI/bge-large-en-v1.5',
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({ inputs: cleanText }),
+export async function embedString(
+  text: string,
+  retries = 3
+): Promise<EmbeddingResponse> {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const cleanText = text
+        .replace(/\x00/g, '')
+        .replace(/\x01/g, '')
+        .replace(/\x02/g, '')
+        .replace(/\x03/g, '');
+
+      const response = await fetch(
+        'https://api-inference.huggingface.co/models/BAAI/bge-large-en-v1.5',
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({ inputs: cleanText }),
+        }
+      );
+
+      // If we get a 503, it's likely a cold start issue
+      if (response.status === 503) {
+        if (attempt < retries) {
+          console.log(
+            `Attempt ${attempt}: Model is loading, retrying in ${attempt * 1000}ms...`
+          );
+          await delay(attempt * 1000); // Exponential backoff
+          continue;
+        }
       }
-    );
 
-    const result = await response.json();
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`API returned status ${response.status}: ${error}`);
+      }
 
-    // The API returns an array with a single embedding array
-    const embedding = result;
+      const result = await response.json();
 
-    return { embedding };
-  } catch (error) {
-    console.error('Error generating embedding:', error);
-    return {
-      embedding: [],
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-    };
+      console.log('🔥🔥🔥🔥🔥 result', { result });
+
+      if (!Array.isArray(result)) {
+        throw new Error('Invalid embedding format from API');
+      }
+
+      const embedding = result;
+
+      return { embedding };
+    } catch (error) {
+      if (attempt === retries) {
+        console.error('All retry attempts failed:', error);
+        throw error;
+      }
+      console.log(
+        `Attempt ${attempt} failed, retrying in ${attempt * 1000}ms...`
+      );
+      await delay(attempt * 1000);
+    }
   }
+
+  throw new Error('Failed to generate embedding after all retries');
 }
 
 // Wrap getSuggestedQuestions with Braintrust tracing
@@ -157,6 +194,7 @@ export async function getRelevantChunks({
 }) {
   try {
     const { embedding } = await embedString(query);
+    console.log('🔥🔥🔥🔥🔥 embedding', { embedding });
     const similarity = sql<number>`1 - (${cosineDistance(NeuripsMetadata.embedding, embedding)})`;
 
     const res = await db
