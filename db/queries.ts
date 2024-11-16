@@ -70,43 +70,13 @@ export async function embedString(
         .replace(/\x02/g, '')
         .replace(/\x03/g, '');
 
-      const response = await fetch(
-        'https://api-inference.huggingface.co/models/BAAI/bge-large-en-v1.5',
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({ inputs: cleanText }),
-        }
-      );
+      const response = await openai.embeddings.create({
+        model: 'text-embedding-3-small',
+        input: cleanText,
+        dimensions: 1024,
+      });
 
-      // If we get a 503, it's likely a cold start issue
-      if (response.status === 503) {
-        if (attempt < retries) {
-          console.log(
-            `Attempt ${attempt}: Model is loading, retrying in ${attempt * 1000}ms...`
-          );
-          await delay(attempt * 1000); // Exponential backoff
-          continue;
-        }
-      }
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`API returned status ${response.status}: ${error}`);
-      }
-
-      const result = await response.json();
-
-      console.log('🔥🔥🔥🔥🔥 result', { result });
-
-      if (!Array.isArray(result)) {
-        throw new Error('Invalid embedding format from API');
-      }
-
-      const embedding = result;
+      const embedding = response.data[0].embedding;
 
       return { embedding };
     } catch (error) {
@@ -207,7 +177,7 @@ export async function getRelevantChunks({
       .where(
         and(
           gt(similarity, 0.4),
-          sql`${NeuripsMetadata.metadata}->>'arxiv_id' = ${arxivId}`
+          sql`${NeuripsMetadata.metadata}->>'paper_id' = ${arxivId}`
         )
       )
       .orderBy(desc(similarity))

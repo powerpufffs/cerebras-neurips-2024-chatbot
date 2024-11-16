@@ -35,7 +35,7 @@ export const chat = pgTable('Chat', {
 export type Chat = InferSelectModel<typeof chat>;
 
 export const NeuripsMetadata = pgTable(
-  'data_neurips_metadata',
+  'data_data_neurips_metadata_v2',
   {
     id: integer('id').primaryKey().notNull(),
     text: varchar('text', { length: 2048 }).notNull(),
@@ -95,7 +95,8 @@ export const NeuripsPaper = pgTable(
     related_events: json('related_events'),
     related_events_ids: json('related_events_ids'),
     searchable_text: text('searchable_text'),
-    arxiv_id: text('arxiv_id'),
+    paper_id: text('paper_id'),
+    paper_source: text('paper_source'),
     huggingface_metadata: json('huggingface_metadata'),
   },
   (table) => ({

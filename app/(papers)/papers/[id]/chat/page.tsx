@@ -26,9 +26,9 @@ export default function PaperChatPage({ params }: { params: { id: string } }) {
   if (error || !paper) return <div>Error loading paper</div>;
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="max-w-[100rem] mx-auto px-4 py-2 pt-6">
-        <div className="flex flex-col items-start ">
+    <div className="flex flex-col h-screen w-full ">
+      <div className="max-w-[800px] mx-auto px-4 py-2 pt-6 w-full ">
+        <div className="flex flex-col w-full items-start ">
           <Link
             href={`/papers/${unwrappedParams.id}${window.location.search}`}
             className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"

@@ -97,14 +97,19 @@ export default function PaperPage({ params }: { params: { id: string } }) {
               >
                 Chat with Paper ✨
               </Link>
-              {paper.arxiv_id && (
+              {paper.paper_id && (
                 <a
-                  href={`https://arxiv.org/abs/${paper.arxiv_id}`}
+                  href={
+                    paper.paper_source === 'openreview'
+                      ? `https://openreview.net/forum?id=${paper.paper_id}`
+                      : `https://arxiv.org/abs/${paper.paper_id}`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
                 >
-                  View on arXiv
+                  View on{' '}
+                  {paper.paper_source === 'openreview' ? 'OpenReview' : 'arXiv'}
                 </a>
               )}
             </div>
