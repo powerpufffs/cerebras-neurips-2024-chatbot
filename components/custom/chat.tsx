@@ -77,6 +77,10 @@ export function Chat({
         <div
           ref={messagesContainerRef}
           className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-auto px-4 pt-8 scrollbar-thin scrollbar-thumb-secondary"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehavior: 'contain'
+          }}
         >
           {messages.length === 0 && <Overview />}
 

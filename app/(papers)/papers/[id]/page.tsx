@@ -64,7 +64,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
         <BackButton />
         <article className="space-y-8 mt-4">
