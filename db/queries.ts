@@ -170,7 +170,6 @@ export async function getRelevantChunks({
 }) {
   try {
     const { embedding } = await embedString(query);
-    console.log('🔥🔥🔥🔥🔥 embedding', { embedding });
     const similarity = sql<number>`1 - (${cosineDistance(NeuripsMetadata.embedding, embedding)})`;
 
     const res = await db
@@ -212,7 +211,6 @@ export async function getPapers({
     if (query) {
       // Use to_tsquery for full-text search
       const sanitizedQuery = query.replace(/[^a-zA-Z0-9\s]/g, '').trim();
-      console.log('🔥🔥🔥🔥🔥 Searching for', { sanitizedQuery, query });
 
       // Get embedding for query
       const { embedding } = await embedString(sanitizedQuery);
@@ -233,8 +231,6 @@ export async function getPapers({
         .from(NeuripsPaper)
         .orderBy(desc(similarity))
         .limit(10);
-
-      console.log({ embeddingResults });
 
       // Combine results, removing duplicates by paper ID
       const combinedResults = [...textResults];
