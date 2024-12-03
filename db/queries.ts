@@ -43,10 +43,16 @@ const logger = initLogger({
 });
 
 // Modify OpenAI initialization to use Braintrust wrapped client
-const openai = wrapOpenAI(
+const cerebras = wrapOpenAI(
   new OpenAI({
     apiKey: process.env.CEREBRAS_API_KEY,
     baseURL: 'https://api.cerebras.ai/v1',
+  })
+);
+
+const openai = wrapOpenAI(
+  new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
   })
 );
 
@@ -112,7 +118,7 @@ export const getSuggestedQuestions = wrapTraced(
       const abstract = paper[0].abstract;
 
       // The OpenAI call will now be automatically tracked by Weave
-      const response = await openai.chat.completions.create({
+      const response = await cerebras.chat.completions.create({
         model: 'llama3.1-70b',
         response_format: { type: 'json_object' },
         messages: [
@@ -208,13 +214,37 @@ export async function getPapers({
       const sanitizedQuery = query.replace(/[^a-zA-Z0-9\s]/g, '').trim();
       console.log('🔥🔥🔥🔥🔥 Searching for', { sanitizedQuery, query });
 
-      return await db
+      // Get embedding for query
+      const { embedding } = await embedString(sanitizedQuery);
+      const similarity = sql<number>`1 - (${cosineDistance(NeuripsPaper.searchable_text_embedding, embedding)})`;
+
+      // Get results from full-text search
+      const textResults = await db
         .select()
         .from(NeuripsPaper)
         .where(
           sql`to_tsvector('english', ${NeuripsPaper.searchable_text}) @@ plainto_tsquery('english', ${sanitizedQuery})`
         )
+        .limit(15);
+
+      // Get results from embedding similarity search
+      const embeddingResults = await db
+        .select()
+        .from(NeuripsPaper)
+        .orderBy(desc(similarity))
         .limit(10);
+
+      console.log({ embeddingResults });
+
+      // Combine results, removing duplicates by paper ID
+      const combinedResults = [...textResults];
+      for (const paper of embeddingResults) {
+        if (!combinedResults.find((p) => p.id === paper.id)) {
+          combinedResults.push(paper);
+        }
+      }
+
+      return combinedResults;
     }
 
     // If no search query, return recent papers

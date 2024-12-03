@@ -98,6 +98,9 @@ export const NeuripsPaper = pgTable(
     paper_id: text('paper_id'),
     paper_source: text('paper_source'),
     huggingface_metadata: json('huggingface_metadata'),
+    searchable_text_embedding: vector('searchable_text_embedding', {
+      dimensions: 1024,
+    }),
   },
   (table) => ({
     searchable_text_tsvector: index('search_gin_idx').using(
