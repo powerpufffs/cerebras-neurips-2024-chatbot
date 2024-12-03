@@ -239,12 +239,12 @@ export async function POST(request: Request) {
       ${abstract ?? 'No abstract found'}
       </ABSTRACT>`;
 
-    if (paper[0].id) {
+    if (paper[0].paper_id) {
       console.log('step 9: fetching relevant chunks for paper', {
         arxivId,
       });
       const chunks = await getRelevantChunks({
-        arxivId: paper[0].id,
+        arxivId: paper[0].paper_id,
         query: userMessage.content as string,
       });
       abstract = chunks[0]?.metadata?.abstract;
