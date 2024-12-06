@@ -220,6 +220,9 @@ export async function POST(request: Request) {
 
     console.log('step 8: building system prompt with paper details');
     let newSystemPrompt = `${technicalPaperPrompt}
+      <PAPER_NAME>
+      ${paper[0]?.name ?? ''}
+      </PAPER_NAME>
       <AUTHORS>
       ${
         paper[0]?.authors
