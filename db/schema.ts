@@ -13,6 +13,8 @@ import {
   boolean,
   index,
   vector,
+  bigint,
+  bigserial,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -189,3 +191,15 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export const usageLog = pgTable('usage_log', {
+  id: bigserial('id', { mode: 'number' }).primaryKey().notNull(),
+  questionText: text('question_text').notNull(),
+  paperId: bigint('paper_id', { mode: 'number' }).references(
+    () => NeuripsPaper.id
+  ),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  metadata: json('metadata'),
+});
+
+export type UsageLog = InferSelectModel<typeof usageLog>;

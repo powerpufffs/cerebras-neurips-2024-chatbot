@@ -20,6 +20,7 @@ import {
   NeuripsPaper,
   vote,
   NeuripsMetadata,
+  usageLog,
 } from './schema';
 
 // Optionally, if not using email/pass login, you can
@@ -59,6 +60,12 @@ const openai = wrapOpenAI(
 interface EmbeddingResponse {
   embedding: number[];
   error?: string;
+}
+
+interface LogUsageParams {
+  questionText: string;
+  paperId?: number;
+  metadata?: Record<string, any>;
 }
 
 export async function embedString(
@@ -506,5 +513,23 @@ export async function getSuggestionsByDocumentId({
       'Failed to get suggestions by document version from database'
     );
     throw error;
+  }
+}
+
+export async function logUsage({
+  questionText,
+  paperId,
+  metadata,
+}: LogUsageParams) {
+  try {
+    return await db.insert(usageLog).values({
+      id: crypto.randomUUID(), // Add required id field
+      questionText,
+      paperId,
+      metadata,
+    });
+  } catch (error) {
+    console.error('Failed to log usage to database:', error);
+    // Don't throw the error - we don't want logging failures to break the app
   }
 }

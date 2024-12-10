@@ -4,7 +4,7 @@ import { initLogger, invoke } from 'braintrust';
 import { customModel } from '@/ai';
 import { models } from '@/ai/models';
 import { technicalPaperPrompt } from '@/ai/prompts';
-import { getPapers, getRelevantChunks } from '@/db/queries';
+import { getPapers, getRelevantChunks, logUsage } from '@/db/queries';
 import { BraintrustAdapter } from '@braintrust/vercel-ai-sdk';
 
 // Initialize Braintrust logger
@@ -191,6 +191,13 @@ export async function POST(request: Request) {
     console.log('step 4: converting messages to core format');
     const coreMessages = convertToCoreMessages(messages);
     const userMessage = coreMessages[coreMessages.length - 1];
+
+    // // Log the usage before making the AI call
+    logUsage({
+      questionText: userMessage.content as string,
+      paperId: +id,
+      metadata: {},
+    });
 
     if (!userMessage) {
       console.log('step 4 error: no user message found');
