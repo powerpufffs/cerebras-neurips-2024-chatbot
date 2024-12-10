@@ -193,7 +193,7 @@ export const suggestion = pgTable(
 export type Suggestion = InferSelectModel<typeof suggestion>;
 
 export const usageLog = pgTable('usage_log', {
-  id: bigserial('id', { mode: 'number' }).primaryKey().notNull(),
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
   questionText: text('question_text').notNull(),
   paperId: bigint('paper_id', { mode: 'number' }).references(
     () => NeuripsPaper.id

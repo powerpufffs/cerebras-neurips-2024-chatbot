@@ -193,6 +193,7 @@ export async function POST(request: Request) {
     const userMessage = coreMessages[coreMessages.length - 1];
 
     // // Log the usage before making the AI call
+    console.log('step 4.2: logging usage');
     logUsage({
       questionText: userMessage.content as string,
       paperId: +id,

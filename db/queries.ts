@@ -523,7 +523,6 @@ export async function logUsage({
 }: LogUsageParams) {
   try {
     return await db.insert(usageLog).values({
-      id: crypto.randomUUID(), // Add required id field
       questionText,
       paperId,
       metadata,
