@@ -75,7 +75,7 @@ export default async function RootLayout({
               href="https://inference.cerebras.ai/"
               className="block w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center py-2 font-medium hover:opacity-90"
             >
-              Try the fastest Llama3.1-70b at 2500 tokens/sec {'  '} →
+              Try the fastest Llama3.-70b at 2500 tokens/sec {'  '} →
             </a>
             {children}
             <Analytics />

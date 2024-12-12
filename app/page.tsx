@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { useState, Suspense } from 'react';
 import { fetcher } from '@/lib/utils';
-import { NeuripsPapers } from '@/db/schema';
+import type { NeuripsPapers } from '@/db/schema';
 import { useQueryState } from 'nuqs';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
@@ -22,12 +22,12 @@ export const renderLatexText = (text: string) => {
     if (part.startsWith('$') && part.endsWith('$')) {
       const latex = part.slice(1, -1);
       return (
-        <span 
-          key={i} 
-          style={{ 
-            display: 'inline-flex', 
-            alignItems: 'baseline', 
-            verticalAlign: 'baseline'
+        <span
+          key={i}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'baseline',
+            verticalAlign: 'baseline',
           }}
         >
           <Text2SVG display="inline" latex={latex} />

@@ -8,11 +8,11 @@ import { getPapers, getRelevantChunks, logUsage } from '@/db/queries';
 import { BraintrustAdapter } from '@braintrust/vercel-ai-sdk';
 
 // Initialize Braintrust logger
-const logger = initLogger({
-  projectName: 'AI Chat',
-  apiKey: process.env.BRAINTRUST_API_KEY,
-  asyncFlush: true, // Since this is Vercel, we can use async flush
-});
+// const logger = initLogger({
+//   projectName: 'AI Chat',
+//   apiKey: process.env.BRAINTRUST_API_KEY,
+//   asyncFlush: true, // Since this is Vercel, we can use async flush
+// });
 
 export const maxDuration = 60;
 

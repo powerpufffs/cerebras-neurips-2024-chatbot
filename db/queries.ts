@@ -37,25 +37,21 @@ interface EmbeddingResponse {
 }
 
 // Initialize Braintrust logger
-const logger = initLogger({
-  projectName: 'NEURIPS Navigator',
-  apiKey: process.env.BRAINTRUST_API_KEY,
-  asyncFlush: true, // Enable background batching
-});
+// const logger = initLogger({
+//   projectName: 'NEURIPS Navigator',
+//   apiKey: process.env.BRAINTRUST_API_KEY,
+//   asyncFlush: true, // Enable background batching
+// });
 
 // Modify OpenAI initialization to use Braintrust wrapped client
-const cerebras = wrapOpenAI(
-  new OpenAI({
-    apiKey: process.env.CEREBRAS_API_KEY,
-    baseURL: 'https://api.cerebras.ai/v1',
-  })
-);
+const cerebras = new OpenAI({
+  apiKey: process.env.CEREBRAS_API_KEY,
+  baseURL: 'https://api.cerebras.ai/v1',
+});
 
-const openai = wrapOpenAI(
-  new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
-);
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 interface EmbeddingResponse {
   embedding: number[];
@@ -108,7 +104,8 @@ export async function embedString(
 }
 
 // Wrap getSuggestedQuestions with Braintrust tracing
-export const getSuggestedQuestions = wrapTraced(
+export const getSuggestedQuestions =
+  // wrapTraced(
   async function getSuggestedQuestions({ id }: { id: string }) {
     try {
       // Get paper abstract from database
@@ -165,8 +162,8 @@ export const getSuggestedQuestions = wrapTraced(
       console.error('Error generating suggested questions:', error);
       throw error;
     }
-  }
-);
+  };
+// );
 
 export async function getRelevantChunks({
   arxivId,
